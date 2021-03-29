@@ -17,6 +17,7 @@ venv: ## Make a new virtual environment
 
 .PHONY: install
 install: venv ## Make venv and install requirements
+	$(PYTHON) -m pip install --upgrade pip
 	$(BIN)/pip install --upgrade -r requirements.txt
 
 freeze: ## Pin current dependencies
