@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 # This ensures make has access to environment variables stored in a file called .env. 
 # This allows Make to utilize these variables in its commands, for example, the name of my virtual environment, or to pass in $(DBNAME) to psql.
-include .env
+#include .env
 
 .PHONY: help
 help: ## Show this help
@@ -35,7 +35,7 @@ db-shell: ## Access the Postgres Docker database interactively with psql. Pass i
 
 .PHONY: test
 test: ## Run tests
-	$(PYTHON) manage.py test application --verbosity=0 --parallel --failfast
+	$(PYTHON) manage.py test --verbosity=0 --parallel --failfast
 
 .PHONY: run
 run: ## Run the Django server
