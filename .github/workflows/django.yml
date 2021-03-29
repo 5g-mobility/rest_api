@@ -21,4 +21,3 @@ jobs:
         run: make install
       - name: Run tests
         run: make test
-          echo test, and deploy your project.
