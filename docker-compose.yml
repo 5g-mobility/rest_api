@@ -44,6 +44,19 @@ services:
             timeout: 10s
             retries: 3
         restart: unless-stopped
+    django:
+        build: .
+        command: python manage.py runserver 0.0.0.0:8000
+        volumes:
+            - .:/code
+        ports:
+            - "8000:8000"
+        environment:
+            - ENVIRONMENT=production
+        networks:
+            - mongodb_network
+        depends_on:
+            - mongodb
 
 volumes:
     mongodb-data:
