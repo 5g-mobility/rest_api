@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: '3.9'
       - name: Create MongoDB container
-        run: make install
+        run: make db-up
       - name: Install Django dependencies
         run: make install
       - name: Run tests
