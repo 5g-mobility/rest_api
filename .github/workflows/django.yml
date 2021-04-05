@@ -17,6 +17,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.9'
+      - name: Create MongoDB container
+        run: make install
       - name: Install Django dependencies
         run: make install
       - name: Run tests
