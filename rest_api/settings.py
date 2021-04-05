@@ -77,8 +77,15 @@ WSGI_APPLICATION = 'rest_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        'NAME': '5g-mobility',
+        'CLIENT': {
+            'host': 'localhost',
+            'port': 27017,
+            'username': 'django',
+            'password': 'djangopass',
+            'authSource': '5g-mobility'
+        }
     }
 }
 
