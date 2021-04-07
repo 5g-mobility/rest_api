@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'rest_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-if os.environ.get('ENVIRONMENT') == 'production':
+if 'ENVIRONMENT' in os.environ and os.environ.get('ENVIRONMENT') == 'production':
     DATABASE_HOST = 'mongodb'
 else:
     DATABASE_HOST = 'localhost'
