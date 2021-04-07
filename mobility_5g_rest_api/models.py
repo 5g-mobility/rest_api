@@ -39,7 +39,7 @@ class Event(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     location = models.CharField(max_length=2, choices=LOCATION)
     event_type = models.CharField(max_length=2, choices=EVENT_TYPE)
-    event_class = models.CharField(max_length=2, choices=EVENT_CLASS, null=True)
+    event_class = models.CharField(max_length=2, choices=EVENT_CLASS, blank=True)
     velocity = models.IntegerField(
         validators=[
             MaxValueValidator(300),
@@ -47,12 +47,12 @@ class Event(models.Model):
         ]
     )
     latitude = models.FloatField(
-        validators=[MinValueValidator(-90.0), MaxValueValidator(90)], null=True
+        validators=[MinValueValidator(-90.0), MaxValueValidator(90)], blank=True
     )
     longitude = models.FloatField(
-        validators=[MinValueValidator(-180.0), MaxValueValidator(180)], null=True
+        validators=[MinValueValidator(-180.0), MaxValueValidator(180)], blank=True
     )
-    co2km = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    co2km = models.DecimalField(max_digits=5, decimal_places=2, blank=True)
 
     class Meta:
         ordering = ["-timestamp"]
@@ -61,19 +61,19 @@ class Event(models.Model):
         return str(self.timestamp) + ", " + str(self.location) + ": " + str(self.event_type)
 
     def clean(self):
-        if self.event_type != "CF" and not self.event_class:
+        if self.event_type != "CF" and self.event_class == "":
             raise ValidationError(
                 {'event_class': "Blank is only allowed when type is Carbon Footprint"})
 
-        if (self.event_type != "CO" or self.event_type != "CF") and not self.latitude:
+        if (self.event_type != "CO" or self.event_type != "CF") and self.latitude == "":
             raise ValidationError(
                 {'latitude': "Latitude is only allowed when type is Carbon Footprint or Conditions"})
 
-        if (self.event_type != "CO" or self.event_type != "CF") and not self.longitude:
+        if (self.event_type != "CO" or self.event_type != "CF") and self.longitude == "":
             raise ValidationError(
                 {'longitude': "Longitude is only allowed when type is Carbon Footprint or Conditions"})
 
-        if self.event_type != "CF" and not self.co2km:
+        if self.event_type != "CF" and self.co2km == "":
             raise ValidationError(
                 {'co2km': "CO2km is only allowed when type is Carbon Footprint"})
 

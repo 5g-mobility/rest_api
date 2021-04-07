@@ -1,9 +1,9 @@
 // Source
 // https://stackoverflow.com/a/52944387/10735382
 
-db.auth('root', 'rootpass')
+db.auth('root', 'rootpass');
 
-db = db.getSiblingDB('5g-mobility')
+db = db.getSiblingDB('5g-mobility');
 
 db.createUser(
         {
@@ -13,6 +13,10 @@ db.createUser(
                 {
                     role: "readWrite",
                     db: "5g-mobility"
+                },
+                {
+                    role: "dbOwner",
+                    db: "test_5g-mobility"
                 }
             ]
         }

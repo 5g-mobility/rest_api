@@ -13,11 +13,14 @@ class EventTest(TestCase):
         pass
         # cls.timestamp = fake
 
+    def tearDown(self):
+        pass
+
     def test_blank_event_class(self):
-        # In test methods, use the variables created above
-        self.assertRaises(ValidationError, Event.objects.create(
-            location="CN",
-            event_type="RT",
-            velocity=fake.random_int(-300, 300)
-            )
-                          )
+        with self.assertRaises(ValidationError, msg={'location': "Location Barra and Costa Nova are only allowed for "
+                                                                 "Condition or Carbon Footprint events"}):
+            Event.objects.create(
+                        location="CN",
+                        event_type="RT",
+                        velocity=fake.random_int(-300, 300)
+                        )
