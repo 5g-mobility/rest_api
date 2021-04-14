@@ -148,12 +148,17 @@ class Event(models.Model):
 
 
 class Climate(models.Model):
+    LOCATION = [
+        ("CN", "Costa Nova"),
+        ("BA", "Barra")
+    ]
     CONDITION = [
         ("FG", "Fog"),
         ("CL", "Clean"),
         ("RN", "Rain"),
     ]
 
+    location = models.CharField(max_length=2, choices=LOCATION)
     condition = models.CharField(max_length=2, choices=CONDITION)
     timestamp = models.DateTimeField(auto_now_add=True)
     daytime = models.BooleanField()  # True - Day, False - Night
@@ -168,6 +173,12 @@ class Climate(models.Model):
 
 
 class DailyInflow(models.Model):
+    LOCATION = [
+        ("CN", "Costa Nova"),
+        ("BA", "Barra")
+    ]
+
+    location = models.CharField(max_length=2, choices=LOCATION)
     maximum = models.IntegerField(
         validators=[
             MinValueValidator(0)
@@ -178,7 +189,7 @@ class DailyInflow(models.Model):
             MinValueValidator(0)
         ]
     )
-    date = models.DateField(auto_now_add=True, unique=True)
+    date = models.DateField(auto_now_add=True)
 
     class Meta:
         ordering = ["-date"]
