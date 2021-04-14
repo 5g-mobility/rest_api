@@ -74,28 +74,32 @@ class Event(models.Model):
         if (self.event_class == "RA" or self.event_class == "FO" or self.event_class == "NL"
             or self.event_class == "LT" or self.event_class == "OT" or self.event_class == "CS") and self.event_type != "CO":
             raise ValidationError(
-                {'event_type': 'Event_class Rain, Fog, No Light, Light and Outside Temperature are only'
+                {'event_type': 'Event_class Rain, Fog, No Light, Light, Outside Temperature and Car Speeding are only'
                                'allowed for the Conditions event type'}
             )
 
-        if (
-                self.event_class == "BC" or self.event_class == "AN" or self.event_class == "PE") and self.event_type != "BL":
+        if (self.event_class == "AN" or self.event_class == "PE") and (self.event_type != "BL" or self.event_type != "RD"):
             raise ValidationError(
-                {'event_type': 'Event_class Bicycle, Animal and Person are only allowed for the Bike Lanes event type'}
+                {'event_type': 'Event_class Animal and Person are only allowed for the Bike Lanes or Road Danger '
+                               'event type'}
             )
 
-        if (
-                self.event_class == "SC" or self.event_class == "SO" or self.event_class == "PE" or self.event_class == "AN") and self.event_type != "RT":
+        if self.event_class == "BC" and (self.event_type != "BL" or self.event_type != "RT"):
             raise ValidationError(
-                {'event_type': 'Event_class Stopped Car, Strange Object, Person and Animal are only allowed for the '
+                {'event_type': 'Event_class Bicycle is only allowed for the Bike Lanes or Road Traffic event type'}
+            )
+
+        if (self.event_class == "CA" or self.event_class == "MC" or self.event_class == "TR") and self.event_type != "RT":
+            raise ValidationError(
+                {'event_type': 'Event_class Car, Motorcycle and Truck are only allowed for the '
                                'Road Traffics event type'}
             )
 
-        if (self.event_type != "CO" or self.event_type != "CF") and self.latitude == "":
+        if (self.event_type != "CO" or self.event_type != "CF") and self.latitude != "":
             raise ValidationError(
                 {'latitude': "Latitude is only allowed when type is Carbon Footprint or Conditions"})
 
-        if (self.event_type != "CO" or self.event_type != "CF") and self.longitude == "":
+        if (self.event_type != "CO" or self.event_type != "CF") and self.longitude != "":
             raise ValidationError(
                 {'longitude': "Longitude is only allowed when type is Carbon Footprint or Conditions"})
 
@@ -103,23 +107,27 @@ class Event(models.Model):
             raise ValidationError(
                 {'event_class': "Blank is only allowed when type is Carbon Footprint"})
 
-        if self.event_type != "CF" and self.co2km == "":
+        if self.event_type != "CF" and self.co2km != "":
             raise ValidationError(
                 {'co2km': "CO2km is only allowed when type is Carbon Footprint"})
 
-        if self.event_type != "CO" and self.event_class == "OT" and self.temperature == "":
+        if self.event_type == "CO" and self.event_class == "OT" and self.temperature == "":
+            raise ValidationError(
+                {'temperature': "Temperature needs to have value"})
+
+        if (self.event_type != "CO" or self.event_class != "OT") and self.temperature != "":
             raise ValidationError(
                 {'temperature': "Temperature is only allowed when type is Conditions and class Outside Temperature"})
 
+        # Já Está
         if (self.event_type != "CO" or self.event_type != "CF") and (self.location == "BA" or self.location == "CN"):
             raise ValidationError(
                 {'location': "Location Barra and Costa Nova are only allowed for Conditions"
                              "or Carbon Footprint events"})
 
-        if (
-                self.event_class == "AN" or self.event_class == "PE" or self.event_class == "SO" or self.event_class == "SC") and self.event_type != "RD":
+        if (self.event_class == "SO" or self.event_class == "SC") and self.event_type != "RD":
             raise ValidationError(
-                {'event_type': 'event_class Animal, Person, Strange Objects or Stopped Car are only allowed for'
+                {'event_type': 'Event_class Strange Objects or Stopped Car are only allowed for'
                                'event_type Road Danger'}
             )
 
