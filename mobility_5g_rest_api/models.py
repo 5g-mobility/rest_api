@@ -61,7 +61,7 @@ class Event(models.Model):
         ordering = ["-timestamp"]
 
     def __str__(self):
-        return str(self.timestamp) + ", " + str(self.location) + ": " + str(self.event_type)
+        return str(self.timestamp) + ", " + str(self.location) + ": " + str(self.event_type) + ": " + str(self.event_class)
 
     def clean(self):
         if (self.location == "RA" or self.location == "DN" or self.location == "PT" or self.location == "25") \
@@ -151,7 +151,7 @@ class Climate(models.Model):
         ordering = ["-timestamp"]
 
     def __str__(self):
-        #FAZER
+        return str(self.timestamp) + ", " + str(self.condition) + ": " + str(self.daytime) + ": " + str(self.temperature)
 
 
 class DailyInflow(models.Model):
@@ -171,7 +171,7 @@ class DailyInflow(models.Model):
         ordering = ["-date"]
 
     def __str__(self):
-        #Fazer
+        return str(self.date) + ", " + str(self.maximum) + ": " + str(self.current)
 
     def clean(self):
         if self.maximum < self.current:
