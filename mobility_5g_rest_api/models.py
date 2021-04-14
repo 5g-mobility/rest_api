@@ -178,7 +178,7 @@ class DailyInflow(models.Model):
             MinValueValidator(0)
         ]
     )
-    date = models.DateField(auto_now_add=True, unique=True)
+    date = models.DateField(auto_now_add=True)
 
     class Meta:
         ordering = ["-date"]

@@ -9,12 +9,6 @@ fake = Faker()
 
 
 class EventTest(TestCase):
-    def setUpTestData(cls):
-        pass
-
-    def tearDown(self):
-        pass
-
     def test_event_creation(self):
         location = "DN"
         event_type = "RT"
@@ -184,12 +178,6 @@ class EventTest(TestCase):
 
 
 class ClimateTest(TestCase):
-    def setUpTestData(cls):
-        pass
-
-    def tearDown(self):
-        pass
-
     def test_climate_creation(self):
         condition = "FG"
         daytime = fake.pybool()
@@ -206,12 +194,6 @@ class ClimateTest(TestCase):
 
 
 class DailyInflowTest(TestCase):
-    def setUpTestData(cls):
-        pass
-
-    def tearDown(self):
-        pass
-
     def test_daily_inflow_creation(self):
         maximum = fake.random_int(100, 300)
         current = fake.random_int(0, 99)
