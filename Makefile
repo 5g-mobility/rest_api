@@ -27,19 +27,15 @@ migrate: ## Make and run migrations
 	$(PYTHON) manage.py makemigrations
 	$(PYTHON) manage.py migrate
 
-db-up: ## Pull and start the Docker Postgres container in the background
-	docker pull postgres
-	docker-compose up -d
-
-db-shell: ## Access the Postgres Docker database interactively with psql. Pass in DBNAME=<name>.
-	docker exec -it container_name psql -d $(DBNAME)
+db-up: ## Pull and start the Docker MongoDB container in the background
+	cd mongodb && docker-compose up -d
 
 .PHONY: test
-test: ## Run tests
+test: ## Run tests 
 	$(PYTHON) manage.py test --verbosity=0 --parallel --failfast
 
 .PHONY: run
 run: ## Run the Django server
 	$(PYTHON) manage.py runserver
 
-start: install migrate run ## Install requirements, apply migrations, then start development server
+start: db-up install migrate run ## Install requirements, apply migrations, then start development server

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -76,10 +77,22 @@ WSGI_APPLICATION = 'rest_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+if 'ENVIRONMENT' in os.environ and os.environ.get('ENVIRONMENT') == 'production':
+    DATABASE_HOST = 'mongodb'
+else:
+    DATABASE_HOST = 'localhost'
+
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': '5g-mobility',
+        'CLIENT': {
+            'host': DATABASE_HOST,
+            'port': 27017,
+            'username': 'django',
+            'password': 'djangopass',
+            'authSource': '5g-mobility'
+        }
     }
 }
 
