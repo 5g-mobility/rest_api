@@ -44,8 +44,8 @@ class Event(models.Model):
     event_class = models.CharField(max_length=2, choices=EVENT_CLASS, blank=True)
     velocity = models.IntegerField(
         validators=[
-            MaxValueValidator(300),
-            MinValueValidator(-300)
+            MaxValueValidator(400),
+            MinValueValidator(-400)
         ]
     )
     latitude = models.FloatField(
@@ -54,7 +54,7 @@ class Event(models.Model):
     longitude = models.FloatField(
         validators=[MinValueValidator(-180.0), MaxValueValidator(180)], blank=True
     )
-    co2km = models.DecimalField(max_digits=5, decimal_places=2, blank=True)
+    co2km = models.DecimalField(max_digits=5, decimal_places=2, blank=True, validators=[MinValueValidator(0.0)])
     temperature = models.DecimalField(max_digits=4, decimal_places=2, blank=True)
 
     class Meta:
@@ -119,7 +119,6 @@ class Event(models.Model):
             raise ValidationError(
                 {'temperature': "Temperature is only allowed when type is Conditions and class Outside Temperature"})
 
-        # Já Está
         if (self.event_type != "CO" or self.event_type != "CF") and (self.location == "BA" or self.location == "CN"):
             raise ValidationError(
                 {'location': "Location Barra and Costa Nova are only allowed for Conditions"
@@ -148,6 +147,12 @@ class Climate(models.Model):
     daytime = models.BooleanField()  # True - Day, False - Night
     temperature = models.DecimalField(max_digits=4, decimal_places=2)
 
+    class Meta:
+        ordering = ["-timestamp"]
+
+    def __str__(self):
+        #FAZER
+
 
 class DailyInflow(models.Model):
     maximum = models.IntegerField(
@@ -160,7 +165,23 @@ class DailyInflow(models.Model):
             MinValueValidator(0)
         ]
     )
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField(auto_now_add=True, unique=True)
+
+    class Meta:
+        ordering = ["-date"]
+
+    def __str__(self):
+        #Fazer
+
+    def clean(self):
+        if self.maximum < self.current:
+            raise ValidationError(
+                {'maximum': 'Maximum value needs to be higher or equals to current'}
+            )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
 
 # Event
 # - ID
