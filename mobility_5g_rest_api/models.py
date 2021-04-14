@@ -95,27 +95,27 @@ class Event(models.Model):
                                'Road Traffics event type'}
             )
 
-        if (self.event_type != "CO" or self.event_type != "CF") and self.latitude != "":
+        if (self.event_type != "CO" and self.event_type != "CF") and self.latitude:
             raise ValidationError(
                 {'latitude': "Latitude is only allowed when type is Carbon Footprint or Conditions"})
 
-        if (self.event_type != "CO" or self.event_type != "CF") and self.longitude != "":
+        if (self.event_type != "CO" and self.event_type != "CF") and self.longitude:
             raise ValidationError(
                 {'longitude': "Longitude is only allowed when type is Carbon Footprint or Conditions"})
 
-        if self.event_type != "CF" and self.event_class == "":
+        if self.event_type != "CF" and not self.event_class:
             raise ValidationError(
                 {'event_class': "Blank is only allowed when type is Carbon Footprint"})
 
-        if self.event_type != "CF" and self.co2km != "":
+        if self.event_type != "CF" and self.co2km:
             raise ValidationError(
                 {'co2km': "CO2km is only allowed when type is Carbon Footprint"})
 
-        if self.event_type == "CO" and self.event_class == "OT" and self.temperature == "":
+        if self.event_type == "CO" and self.event_class == "OT" and not self.temperature:
             raise ValidationError(
                 {'temperature': "Temperature needs to have value"})
 
-        if (self.event_type != "CO" or self.event_class != "OT") and self.temperature != "":
+        if (self.event_type != "CO" or self.event_class != "OT") and self.temperature:
             raise ValidationError(
                 {'temperature': "Temperature is only allowed when type is Conditions and class Outside Temperature"})
 
