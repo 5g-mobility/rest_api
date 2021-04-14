@@ -28,7 +28,6 @@ migrate: ## Make and run migrations
 	$(PYTHON) manage.py migrate
 
 db-up: ## Pull and start the Docker MongoDB container in the background
-	docker volume rm mongodb-data
 	cd mongodb && docker-compose up -d
 
 .PHONY: test
