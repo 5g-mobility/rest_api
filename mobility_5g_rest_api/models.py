@@ -41,7 +41,8 @@ class Event(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     location = models.CharField(max_length=2, choices=LOCATION)
     event_type = models.CharField(max_length=2, choices=EVENT_TYPE)
-    event_class = models.CharField(max_length=2, choices=EVENT_CLASS, blank=True)
+    event_class = models.CharField(
+        max_length=2, choices=EVENT_CLASS, blank=True)
     velocity = models.IntegerField(
         validators=[
             MaxValueValidator(400),
@@ -54,8 +55,10 @@ class Event(models.Model):
     longitude = models.FloatField(
         validators=[MinValueValidator(-180.0), MaxValueValidator(180)], blank=True
     )
-    co2km = models.DecimalField(max_digits=5, decimal_places=2, blank=True, validators=[MinValueValidator(0.0)])
-    temperature = models.DecimalField(max_digits=4, decimal_places=2, blank=True)
+    co2km = models.DecimalField(
+        max_digits=5, decimal_places=2, blank=True, validators=[MinValueValidator(0.0)])
+    temperature = models.DecimalField(
+        max_digits=4, decimal_places=2, blank=True)
 
     class Meta:
         ordering = ["-timestamp"]
@@ -72,7 +75,7 @@ class Event(models.Model):
             )
 
         if (self.event_class == "RA" or self.event_class == "FO" or self.event_class == "NL"
-            or self.event_class == "LT" or self.event_class == "OT" or self.event_class == "CS") and self.event_type != "CO":
+                or self.event_class == "LT" or self.event_class == "OT" or self.event_class == "CS") and self.event_type != "CO":
             raise ValidationError(
                 {'event_type': 'Event_class Rain, Fog, No Light, Light, Outside Temperature and Car Speeding are only'
                                'allowed for the Conditions event type'}
@@ -188,10 +191,10 @@ class DailyInflow(models.Model):
 # - Timestamp
 # - Location (Ponte, Ria...) ou (Costa Nova/Barra) para carbonfootprint
 # - Type (Road_Traffic, Road_danger, Bike_Lanes, Conditions, Carbon_Footprint)
-# - Class 
+# - Class
 #     - Animal, Person, Strange_Objects, Stopped_car - > Road_danger_event
 #     - Cars, bikes, moto, camião -> Road_Traffic_Event
-#     - Bike (Animal & Person) -> Bike_Lanes_Event 
+#     - Bike (Animal & Person) -> Bike_Lanes_Event
 #     - Rain, fog, no_light, car_speeding -> Conditions_Event
 # - Velocity
 # - GeoLocation (só para conditions e carbonfooprint)

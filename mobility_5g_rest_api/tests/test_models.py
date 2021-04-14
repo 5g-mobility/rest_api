@@ -28,7 +28,8 @@ class EventTest(TestCase):
         )
         self.assertEquals(ev.location, location, "Location not equal!")
         self.assertEquals(ev.event_type, event_type, "Event Type not equal!")
-        self.assertEquals(ev.event_class, event_class, "Event Class not equal!")
+        self.assertEquals(ev.event_class, event_class,
+                          "Event Class not equal!")
         self.assertEquals(ev.velocity, velocity, "Velocity not equal!")
 
     def test_cn_ba_location(self):
@@ -42,7 +43,7 @@ class EventTest(TestCase):
 
     def test_event_class_conditions(self):
         with self.assertRaises(ValidationError, msg={
-            'event_type': 'Event_class Rain, Fog, No Light, Light, Outside Temperature and Car Speeding are only allowed for the Conditions event type'}):
+                'event_type': 'Event_class Rain, Fog, No Light, Light, Outside Temperature and Car Speeding are only allowed for the Conditions event type'}):
             Event.objects.create(
                 location="RA",
                 event_type="RT",
@@ -196,7 +197,8 @@ class ClimateTest(TestCase):
         )
         self.assertEquals(cl.condition, condition, "Condition not equal!")
         self.assertEquals(cl.daytime, daytime, "Daytime not equal!")
-        self.assertEquals(cl.temperature, temperature, "Temperature not equal!")
+        self.assertEquals(cl.temperature, temperature,
+                          "Temperature not equal!")
 
 
 class DailyInflowTest(TestCase):
