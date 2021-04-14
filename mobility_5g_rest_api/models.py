@@ -18,7 +18,6 @@ class Event(models.Model):
         ("RD", "Road Danger"),
         ("BL", "Bike Lanes"),
         ("CO", "Conditions"),
-        ("CF", "Carbon Footprint"),
     ]
 
     EVENT_CLASS = [
@@ -36,13 +35,14 @@ class Event(models.Model):
         ("LT", "Light"),
         ("OT", "Outside Temperature"),
         ("CS", "Car Speeding"),
+        ("CF", "Carbon Footprint")
     ]
 
     timestamp = models.DateTimeField(auto_now_add=True)
     location = models.CharField(max_length=2, choices=LOCATION)
     event_type = models.CharField(max_length=2, choices=EVENT_TYPE)
     event_class = models.CharField(
-        max_length=2, choices=EVENT_CLASS, blank=True)
+        max_length=2, choices=EVENT_CLASS)
     velocity = models.IntegerField(
         validators=[
             MaxValueValidator(400),
@@ -64,24 +64,25 @@ class Event(models.Model):
         ordering = ["-timestamp"]
 
     def __str__(self):
-        return str(self.timestamp) + ", " + str(self.location) + ": " + str(self.event_type) + ": " + str(self.event_class)
+        return str(self.timestamp) + ", " + str(self.location) + ": " + str(self.event_type) + ": " + str(
+            self.event_class)
 
     def clean(self):
         if (self.location == "RA" or self.location == "DN" or self.location == "PT" or self.location == "25") \
-                and (self.event_type == "CO" or self.event_type == "CF"):
+                and self.event_type == "CO":
             raise ValidationError(
-                {'location': 'Location Ria Ativa, Duna, Ponte da Barra and A25 are not allowed for Conditions or '
-                             'Carbon Footprint events'}
+                {'location': 'Location Ria Ativa, Duna, Ponte da Barra and A25 are not allowed for Conditions events'}
             )
 
         if (self.event_class == "RA" or self.event_class == "FO" or self.event_class == "NL"
-                or self.event_class == "LT" or self.event_class == "OT" or self.event_class == "CS") and self.event_type != "CO":
+            or self.event_class == "LT" or self.event_class == "OT" or self.event_class == "CS" or self.event_class == "CF") and self.event_type != "CO":
             raise ValidationError(
-                {'event_type': 'Event_class Rain, Fog, No Light, Light, Outside Temperature and Car Speeding are only'
-                               'allowed for the Conditions event type'}
+                {'event_type': 'Event_class Rain, Fog, No Light, Light, Outside Temperature, Car Speeding and Carbon '
+                               'Footprint are only allowed for the Conditions event type'}
             )
 
-        if (self.event_class == "AN" or self.event_class == "PE") and (self.event_type != "BL" or self.event_type != "RD"):
+        if (self.event_class == "AN" or self.event_class == "PE") and (
+                self.event_type != "BL" or self.event_type != "RD"):
             raise ValidationError(
                 {'event_type': 'Event_class Animal and Person are only allowed for the Bike Lanes or Road Danger '
                                'event type'}
@@ -92,27 +93,36 @@ class Event(models.Model):
                 {'event_type': 'Event_class Bicycle is only allowed for the Bike Lanes or Road Traffic event type'}
             )
 
-        if (self.event_class == "CA" or self.event_class == "MC" or self.event_class == "TR") and self.event_type != "RT":
+        if (
+                self.event_class == "CA" or self.event_class == "MC" or self.event_class == "TR") and self.event_type != "RT":
             raise ValidationError(
                 {'event_type': 'Event_class Car, Motorcycle and Truck are only allowed for the '
                                'Road Traffics event type'}
             )
 
-        if (self.event_type != "CO" and self.event_type != "CF") and self.latitude:
+        if self.event_type != "CO" and self.latitude:
             raise ValidationError(
-                {'latitude': "Latitude is only allowed when type is Carbon Footprint or Conditions"})
+                {'latitude': "Latitude is only allowed when event type is Conditions"})
 
-        if (self.event_type != "CO" and self.event_type != "CF") and self.longitude:
+        if self.event_type != "CO" and self.longitude:
             raise ValidationError(
-                {'longitude': "Longitude is only allowed when type is Carbon Footprint or Conditions"})
+                {'longitude': "Longitude is only allowed when event type Conditions"})
 
-        if self.event_type != "CF" and not self.event_class:
+        if (self.event_type != "CO" or (self.event_type == "CO" and self.event_class != "CF")) and self.co2km:
             raise ValidationError(
-                {'event_class': "Blank is only allowed when type is Carbon Footprint"})
+                {'co2km': "CO2km is only allowed when type is Conditions and class is Carbon Footprint"})
 
-        if self.event_type != "CF" and self.co2km:
+        if self.event_type == "CO" and not self.latitude:
             raise ValidationError(
-                {'co2km': "CO2km is only allowed when type is Carbon Footprint"})
+                {'latitude': "Latitude needs to have value"})
+
+        if self.event_type == "CO" and not self.longitude:
+            raise ValidationError(
+                {'longitude': "Longitude needs to have value"})
+
+        if self.event_type == "CO" and self.event_class == "CF" and not self.co2km:
+            raise ValidationError(
+                {'co2km': "CO2km needs to have value"})
 
         if self.event_type == "CO" and self.event_class == "OT" and not self.temperature:
             raise ValidationError(
@@ -122,10 +132,9 @@ class Event(models.Model):
             raise ValidationError(
                 {'temperature': "Temperature is only allowed when type is Conditions and class Outside Temperature"})
 
-        if (self.event_type != "CO" or self.event_type != "CF") and (self.location == "BA" or self.location == "CN"):
+        if self.event_type != "CO" and (self.location == "BA" or self.location == "CN"):
             raise ValidationError(
-                {'location': "Location Barra and Costa Nova are only allowed for Conditions"
-                             "or Carbon Footprint events"})
+                {'location': "Location Barra and Costa Nova are only allowed for Conditions events"})
 
         if (self.event_class == "SO" or self.event_class == "SC") and self.event_type != "RD":
             raise ValidationError(
@@ -154,7 +163,8 @@ class Climate(models.Model):
         ordering = ["-timestamp"]
 
     def __str__(self):
-        return str(self.timestamp) + ", " + str(self.condition) + ": " + str(self.daytime) + ": " + str(self.temperature)
+        return str(self.timestamp) + ", " + str(self.condition) + ": " + str(self.daytime) + ": " + str(
+            self.temperature)
 
 
 class DailyInflow(models.Model):

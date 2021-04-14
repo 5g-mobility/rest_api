@@ -33,8 +33,8 @@ class EventTest(TestCase):
         self.assertEquals(ev.velocity, velocity, "Velocity not equal!")
 
     def test_cn_ba_location(self):
-        with self.assertRaises(ValidationError, msg={'location': "Location Barra and Costa Nova are only allowed for "
-                                                                 "Condition or Carbon Footprint events"}):
+        with self.assertRaises(ValidationError, msg={'location': 'Location Barra and Costa Nova are only allowed for '
+                                                                 'Conditions events'}):
             Event.objects.create(
                 location="CN",
                 event_type="RT",
@@ -43,7 +43,8 @@ class EventTest(TestCase):
 
     def test_event_class_conditions(self):
         with self.assertRaises(ValidationError, msg={
-                'event_type': 'Event_class Rain, Fog, No Light, Light, Outside Temperature and Car Speeding are only allowed for the Conditions event type'}):
+                'event_type': 'Event_class Rain, Fog, No Light, Light, Outside Temperature, Car Speeding and Carbon '
+                              'Footprint are only allowed for the Conditions event type'}):
             Event.objects.create(
                 location="RA",
                 event_type="RT",
@@ -53,19 +54,21 @@ class EventTest(TestCase):
 
     def test_cf_co_not_allowed_locations(self):
         with self.assertRaises(ValidationError, msg={'location': 'Location Ria Ativa, Duna, Ponte da Barra and A25 '
-                                                                 'are not allowed for Conditions or Carbon Footprint '
-                                                                 'events'}):
+                                                                 'are not allowed for Conditions events'}):
             Event.objects.create(
                 location="RA",
                 event_type="CO",
                 event_class="LT",
+                latitude=fake.pydecimal(2, 2, False, -90, 90),
+                longitude=fake.pydecimal(3, 2, False, -180, 180),
                 velocity=fake.random_int(-300, 300)
             )
 
     def test_an_pe_not_allowed_event_type(self):
         with self.assertRaises(ValidationError,
                                msg={
-                                   'event_type': 'Event_class Animal and Person are only allowed for the Bike Lanes or Road Danger event type'}):
+                                   'event_type': 'Event_class Animal and Person are only allowed for the Bike Lanes '
+                                                 'or Road Danger event type'}):
             Event.objects.create(
                 location="RA",
                 event_type="RT",
@@ -76,7 +79,8 @@ class EventTest(TestCase):
     def test_bc_not_allowed_event_type(self):
         with self.assertRaises(ValidationError,
                                msg={
-                                   'event_type': 'Event_class Bicycle is only allowed for the Bike Lanes or Road Traffic event type'}):
+                                   'event_type': 'Event_class Bicycle is only allowed for the Bike Lanes or Road '
+                                                 'Traffic event type'}):
             Event.objects.create(
                 location="DN",
                 event_type="RD",
@@ -87,7 +91,8 @@ class EventTest(TestCase):
     def test_ca_mc_tr_not_allowed_event_type(self):
         with self.assertRaises(ValidationError,
                                msg={
-                                   'event_type': 'Event_class Car, Motorcycle and Truck are only allowed for the Road Traffics event type'}):
+                                   'event_type': 'Event_class Car, Motorcycle and Truck are only allowed for the Road '
+                                                 'Traffics event type'}):
             Event.objects.create(
                 location="PT",
                 event_type="RD",
@@ -95,49 +100,45 @@ class EventTest(TestCase):
                 velocity=fake.random_int(-300, 300)
             )
 
-    def test_latitude_not_allowed_event_type(self):
+    def test_latitude_longitude_not_allowed_event_type(self):
         with self.assertRaises(ValidationError,
                                msg={
-                                   'latitude': 'Latitude is only allowed when type is Carbon Footprint or Conditions'}):
+                                   'latitude': 'Latitude is only allowed when event type is Conditions'}) and self.assertRaises(ValidationError,
+                               msg={
+                                   'longitude': 'Longitude is only allowed when event type is Conditions'}):
             Event.objects.create(
                 location="PT",
                 event_type="RT",
                 event_class="CA",
-                latitude=80,
-                velocity=fake.random_int(-300, 300)
-            )
-
-    def test_longitude_not_allowed_event_type(self):
-        with self.assertRaises(ValidationError,
-                               msg={
-                                   'longitude': 'Longitude is only allowed when type is Carbon Footprint or Conditions'}):
-            Event.objects.create(
-                location="PT",
-                event_type="RT",
-                event_class="CA",
-                longitude=120,
-                velocity=fake.random_int(-300, 300)
-            )
-
-    def test_blank_event_class(self):
-        with self.assertRaises(ValidationError,
-                               msg={
-                                   'event_class': 'Blank is only allowed when type is Carbon Footprint'}):
-            Event.objects.create(
-                location="PT",
-                event_type="RT",
+                latitude=fake.pydecimal(2, 2, False, -90, 90),
                 velocity=fake.random_int(-300, 300)
             )
 
     def test_co2_not_allowed_event_type(self):
         with self.assertRaises(ValidationError,
                                msg={
-                                   'co2km': 'CO2km is only allowed when type is Carbon Footprint'}):
+                                   'co2km': 'CO2km is only allowed when type is Conditions and class is Carbon '
+                                            'Footprint'}):
             Event.objects.create(
                 location="PT",
-                event_type="RT",
-                event_class="CA",
-                co2km=200.01,
+                event_type="CO",
+                event_class="FO",
+                latitude=fake.pydecimal(2, 2, False, -90, 90),
+                longitude=fake.pydecimal(3, 2, False, -180, 180),
+                co2km=fake.pydecimal(3, 2, True),
+                velocity=fake.random_int(-300, 300)
+            )
+
+    def test_co2_not_given(self):
+        with self.assertRaises(ValidationError,
+                               msg={
+                                   'co2km': 'CO2km needs to have value'}):
+            Event.objects.create(
+                location="PT",
+                event_type="CO",
+                event_class="CF",
+                latitude=fake.pydecimal(2, 2, False, -90, 90),
+                longitude=fake.pydecimal(3, 2, False, -180, 180),
                 velocity=fake.random_int(-300, 300)
             )
 
@@ -149,28 +150,31 @@ class EventTest(TestCase):
                 location="BA",
                 event_type="CO",
                 event_class="OT",
-                latitude=80,
-                longitude=120,
+                latitude=fake.pydecimal(2, 2, False, -90, 90),
+                longitude=fake.pydecimal(3, 2, False, -180, 180),
                 velocity=fake.random_int(-300, 300)
             )
 
     def test_temperature_not_allowed_event_class(self):
         with self.assertRaises(ValidationError,
                                msg={
-                                   'temperature': 'Temperature is only allowed when type is Conditions and class Outside Temperature'}):
+                                   'temperature': 'Temperature is only allowed when type is Conditions and class '
+                                                  'Outside Temperature'}):
             Event.objects.create(
                 location="BA",
                 event_type="CO",
                 event_class="FO",
-                latitude=80,
-                longitude=120,
+                latitude=fake.pydecimal(2, 2, False, -90, 90),
+                longitude=fake.pydecimal(3, 2, False, -180, 180),
+                temperature=fake.pydecimal(2, 2, False, -20, 40),
                 velocity=fake.random_int(-300, 300)
             )
 
     def test_so_sc_not_allowed_event_type(self):
         with self.assertRaises(ValidationError,
                                msg={
-                                   'event_type': 'Event_class Strange Objects or Stopped Car are only allowed for event_type Road Danger'}):
+                                   'event_type': 'Event_class Strange Objects or Stopped Car are only allowed for '
+                                                 'event_type Road Danger'}):
             Event.objects.create(
                 location="PT",
                 event_type="RT",
