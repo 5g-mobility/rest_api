@@ -180,29 +180,36 @@ class EventTest(TestCase):
 class ClimateTest(TestCase):
     def test_climate_creation(self):
         condition = "FG"
+        location = "BA"
         daytime = fake.pybool()
         temperature = fake.pydecimal(2, 2, False)
         cl = Climate.objects.create(
             condition=condition,
             daytime=daytime,
             temperature=temperature,
+            location=location
         )
         self.assertEquals(cl.condition, condition, "Condition not equal!")
         self.assertEquals(cl.daytime, daytime, "Daytime not equal!")
         self.assertEquals(cl.temperature, temperature,
                           "Temperature not equal!")
+        self.assertEquals(cl.location, location, "Location not equal!")
+
 
 
 class DailyInflowTest(TestCase):
     def test_daily_inflow_creation(self):
+        location = "BA"
         maximum = fake.random_int(100, 300)
         current = fake.random_int(0, 99)
         dl = DailyInflow.objects.create(
             maximum=maximum,
             current=current,
+            location=location
         )
         self.assertEquals(dl.maximum, maximum, "Maximum not equal!")
         self.assertEquals(dl.current, current, "Current not equal!")
+        self.assertEquals(dl.location, location, "Location not equal!")
 
     def test_daily_inflow_maximum_less_than_current(self):
         with self.assertRaises(ValidationError,
