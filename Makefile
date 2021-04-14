@@ -29,7 +29,7 @@ migrate: ## Make and run migrations
 
 db-up: ## Pull and start the Docker MongoDB container in the background
     docker volume rm mongodb-data
-	cd mongodb && docker-compose up -d
+    cd mongodb && docker-compose up -d
 
 .PHONY: test
 test: ## Run tests 
