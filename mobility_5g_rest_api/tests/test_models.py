@@ -37,8 +37,8 @@ class EventTest(TestCase):
 
     def test_event_class_conditions(self):
         with self.assertRaises(ValidationError, msg={
-                'event_type': 'Event_class Rain, Fog, No Light, Light, Outside Temperature, Car Speeding and Carbon '
-                              'Footprint are only allowed for the Conditions event type'}):
+            'event_type': 'Event_class Rain, Fog, No Light, Light, Outside Temperature, Car Speeding and Carbon '
+                          'Footprint are only allowed for the Conditions event type'}):
             Event.objects.create(
                 location="RA",
                 event_type="RT",
@@ -97,9 +97,10 @@ class EventTest(TestCase):
     def test_latitude_longitude_not_allowed_event_type(self):
         with self.assertRaises(ValidationError,
                                msg={
-                                   'latitude': 'Latitude is only allowed when event type is Conditions'}) and self.assertRaises(ValidationError,
-                               msg={
-                                   'longitude': 'Longitude is only allowed when event type is Conditions'}):
+                                   'latitude': 'Latitude is only allowed when event type is Conditions'}) and self.assertRaises(
+            ValidationError,
+            msg={
+                'longitude': 'Longitude is only allowed when event type is Conditions'}):
             Event.objects.create(
                 location="PT",
                 event_type="RT",
@@ -194,7 +195,6 @@ class ClimateTest(TestCase):
         self.assertEquals(cl.temperature, temperature,
                           "Temperature not equal!")
         self.assertEquals(cl.location, location, "Location not equal!")
-
 
 
 class DailyInflowTest(TestCase):

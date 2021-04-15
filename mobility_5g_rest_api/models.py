@@ -50,15 +50,15 @@ class Event(models.Model):
         ]
     )
     latitude = models.FloatField(
-        validators=[MinValueValidator(-90.0), MaxValueValidator(90)], blank=True
+        validators=[MinValueValidator(-90.0), MaxValueValidator(90)], blank=True, null=False
     )
     longitude = models.FloatField(
-        validators=[MinValueValidator(-180.0), MaxValueValidator(180)], blank=True
+        validators=[MinValueValidator(-180.0), MaxValueValidator(180)], blank=True, null=False
     )
     co2km = models.DecimalField(
         max_digits=5, decimal_places=2, blank=True, validators=[MinValueValidator(0.0)])
     temperature = models.DecimalField(
-        max_digits=4, decimal_places=2, blank=True)
+        max_digits=4, decimal_places=2, blank=True, null=False)
 
     class Meta:
         ordering = ["-timestamp"]
