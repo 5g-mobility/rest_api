@@ -8,29 +8,6 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
     filterset_fields = {
-        'location': ['exact'],
-        'condition': ['exact'],
-        'timestamp': ['exact', 'lte', 'gte'],
-        'daytime': ['exact'],
-        'temperature': ['exact', 'lte', 'gte'],
-    }
-
-
-class ClimateViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Climate.objects.all()
-    serializer_class = ClimateSerializer
-    filterset_fields = {
-        'location': ['exact'],
-        'maximum': ['exact', 'lte', 'gte'],
-        'current': ['exact', 'lte', 'gte'],
-        'date': ['exact', 'lte', 'gte'],
-    }
-
-
-class DailyInflowViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = DailyInflow.objects.all()
-    serializer_class = DailyInflowSerializer
-    filterset_fields = {
         'timestamp': ['exact', 'lte', 'gte'],
         'location': ['exact'],
         'event_type': ['exact'],
@@ -40,4 +17,27 @@ class DailyInflowViewSet(viewsets.ReadOnlyModelViewSet):
         'longitude': ['exact', 'lte', 'gte'],
         'co2km': ['exact', 'lte', 'gte'],
         'temperature': ['exact', 'lte', 'gte'],
+    }
+
+
+class ClimateViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Climate.objects.all()
+    serializer_class = ClimateSerializer
+    filterset_fields = {
+        'location': ['exact'],
+        'condition': ['exact'],
+        'timestamp': ['exact', 'lte', 'gte'],
+        'daytime': ['exact'],
+        'temperature': ['exact', 'lte', 'gte'],
+    }
+
+
+class DailyInflowViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = DailyInflow.objects.all()
+    serializer_class = DailyInflowSerializer
+    filterset_fields = {
+        'location': ['exact'],
+        'maximum': ['exact', 'lte', 'gte'],
+        'current': ['exact', 'lte', 'gte'],
+        'date': ['exact', 'lte', 'gte'],
     }
