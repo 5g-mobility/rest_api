@@ -1,0 +1,16 @@
+[
+    {
+        "model": "mobility_5g_rest_api.Event",
+        "pk": 1,
+        "fields": {
+            "location": "CN",
+            "event_type": "CO",
+            "event_class": "CF",
+            "velocity": 200,
+            "latitude": 65,
+            "longitude": 120,
+            "co2km": 50
+        }
+    }
+
+]

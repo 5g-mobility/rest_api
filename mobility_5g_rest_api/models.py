@@ -50,15 +50,15 @@ class Event(models.Model):
         ]
     )
     latitude = models.FloatField(
-        validators=[MinValueValidator(-90.0), MaxValueValidator(90)], blank=True
+        validators=[MinValueValidator(-90.0), MaxValueValidator(90)], blank=True, null=False
     )
     longitude = models.FloatField(
-        validators=[MinValueValidator(-180.0), MaxValueValidator(180)], blank=True
+        validators=[MinValueValidator(-180.0), MaxValueValidator(180)], blank=True, null=False
     )
     co2km = models.DecimalField(
         max_digits=5, decimal_places=2, blank=True, validators=[MinValueValidator(0.0)])
     temperature = models.DecimalField(
-        max_digits=4, decimal_places=2, blank=True)
+        max_digits=4, decimal_places=2, blank=True, null=False)
 
     class Meta:
         ordering = ["-timestamp"]
@@ -148,12 +148,17 @@ class Event(models.Model):
 
 
 class Climate(models.Model):
+    LOCATION = [
+        ("CN", "Costa Nova"),
+        ("BA", "Barra")
+    ]
     CONDITION = [
         ("FG", "Fog"),
         ("CL", "Clean"),
         ("RN", "Rain"),
     ]
 
+    location = models.CharField(max_length=2, choices=LOCATION)
     condition = models.CharField(max_length=2, choices=CONDITION)
     timestamp = models.DateTimeField(auto_now_add=True)
     daytime = models.BooleanField()  # True - Day, False - Night
@@ -168,6 +173,12 @@ class Climate(models.Model):
 
 
 class DailyInflow(models.Model):
+    LOCATION = [
+        ("CN", "Costa Nova"),
+        ("BA", "Barra")
+    ]
+
+    location = models.CharField(max_length=2, choices=LOCATION)
     maximum = models.IntegerField(
         validators=[
             MinValueValidator(0)
@@ -178,7 +189,7 @@ class DailyInflow(models.Model):
             MinValueValidator(0)
         ]
     )
-    date = models.DateField(auto_now_add=True, unique=True)
+    date = models.DateField(auto_now_add=True)
 
     class Meta:
         ordering = ["-date"]

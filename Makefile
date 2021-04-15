@@ -20,15 +20,26 @@ install: venv ## Make venv and install requirements
 	$(PYTHON) -m pip install --upgrade pip
 	$(BIN)/pip install --upgrade -r requirements.txt
 
+.PHONY: freeze
 freeze: ## Pin current dependencies
 	$(BIN)/pip freeze > requirements.txt
 
+.PHONY: migrate
 migrate: ## Make and run migrations
 	$(PYTHON) manage.py makemigrations
 	$(PYTHON) manage.py migrate
 
+.PHONY: db-up
 db-up: ## Pull and start the Docker MongoDB container in the background
 	cd mongodb && docker-compose up -d
+
+.PHONY: volume-down
+volume-down: ## Remove volume of MongoDB Container
+	docker volume rm mongodb-data
+
+.PHONY: fixtures
+fixtures: ## Load fixtures
+	$(PYTHON) manage.py loaddata event.json
 
 .PHONY: test
 test: ## Run tests 
