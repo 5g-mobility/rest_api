@@ -3,13 +3,14 @@
         "model": "mobility_5g_rest_api.Event",
         "pk": 1,
         "fields": {
+            "timestamp": "2021-04-15 16:31:57.446530",
             "location": "CN",
             "event_type": "CO",
             "event_class": "CF",
             "velocity": 200,
             "latitude": 65,
             "longitude": 120,
-            "co2km": 50
+            "co2km": 50.02
         }
     }
 
