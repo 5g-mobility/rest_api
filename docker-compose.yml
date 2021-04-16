@@ -44,6 +44,15 @@ services:
             timeout: 10s
             retries: 3
         restart: unless-stopped
+    rabbitmq:
+        image: rabbitmq:3.8.3-management
+        restart: unless-stopped
+        volumes:
+            - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+            - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+        ports:
+            - 5672:5672
+            - 15672:15672
     django:
         build: .
         command: python manage.py runserver 0.0.0.0:8000
