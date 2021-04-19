@@ -44,9 +44,22 @@ services:
             timeout: 10s
             retries: 3
         restart: unless-stopped
+    rabbitmq:
+        image: rabbitmq:3.8.3-management
+        container_name: rabbitmq
+        restart: unless-stopped
+        networks: 
+            - rabbit_network
+        volumes:
+            - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+            - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+        ports:
+            - 5672:5672
+            - 15672:15672
     django:
         build: .
         command: python manage.py runserver 0.0.0.0:8000
+        container_name: django
         volumes:
             - .:/code
         ports:
@@ -57,6 +70,7 @@ services:
             - mongodb_network
         depends_on:
             - mongodb
+            - rabbitmq
 
 volumes:
     mongodb-data:
@@ -65,3 +79,5 @@ volumes:
 networks:
     mongodb_network:
         name: mongodb_network
+    rabbit_network:
+        name: rabbit_network
