@@ -1,10 +1,10 @@
 from django.urls import path, include
 
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 from mobility_5g_rest_api import views
 
 # Create a router and register our viewsets with it.
-router = DefaultRouter()
+router = SimpleRouter()
 router.register(r'event', views.EventViewSet)
 router.register(r'climate', views.ClimateViewSet)
 router.register(r'daily-inflow', views.DailyInflowViewSet)
