@@ -12,6 +12,19 @@
             "longitude": 120,
             "co2km": 50.02
         }
+    },
+    {
+        "model": "mobility_5g_rest_api.Event",
+        "pk": 2,
+        "fields": {
+            "timestamp": "2021-04-15 16:32:04.446530",
+            "location": "BA",
+            "event_type": "RD",
+            "event_class": "SC",
+            "velocity": 0,
+            "latitude": 65,
+            "longitude": 120
+        }
     }
 
 ]

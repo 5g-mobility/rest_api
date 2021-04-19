@@ -1,0 +1,23 @@
+[
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 1,
+    "fields": {
+      "date": "2021-04-15",
+      "location": "BA",
+      "maximum": 57,
+      "temperature": 21.1
+    }
+  },
+    {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 2,
+    "fields": {
+      "date": "2021-04-19",
+      "location": "BA",
+      "maximum": 62,
+      "current": 24,
+      "temperature": 23.5
+    }
+  }
+]
