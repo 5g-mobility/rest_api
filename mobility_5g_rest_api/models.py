@@ -205,6 +205,31 @@ class DailyInflow(models.Model):
         self.full_clean()
         return super().save(*args, **kwargs)
 
+
+class RadarEvent(models.Model):
+    CLASSES = [
+        ("CA", "Car"),
+        ("MB", "Motorbike"),
+        ("TR", "Truck")
+    ]
+    timestamp = models.DateTimeField(auto_now_add=True)
+    velocity = models.IntegerField(
+        validators=[
+            MaxValueValidator(400),
+            MinValueValidator(-400)
+        ]
+    )
+    latitude = models.FloatField(
+        validators=[MinValueValidator(-90.0), MaxValueValidator(90)], blank=True
+    )
+    longitude = models.FloatField(
+        validators=[MinValueValidator(-180.0), MaxValueValidator(180)], blank=True
+    )
+    radar_id = models.IntegerField # terá um range de valores?
+    classe = models.CharField(max_length=2, choices=CLASSES)
+
+
+
 # Event
 # - ID
 # - Timestamp

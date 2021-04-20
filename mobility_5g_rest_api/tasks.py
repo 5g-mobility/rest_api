@@ -11,6 +11,10 @@ logger = get_task_logger(__name__)
 def add(x, y):
     return x + y
 
+@shared_task()
+def print_json(json):
+    print(json)
+    return json
 
 @shared_task()
 def mul(x, y):

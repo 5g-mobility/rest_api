@@ -219,3 +219,8 @@ class DailyInflowTest(TestCase):
                 maximum=2,
                 current=100,
             )
+
+
+class RadarEventTest(TestCase):
+    def test_event_creation(self):
+
