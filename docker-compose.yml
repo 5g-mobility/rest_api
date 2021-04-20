@@ -68,6 +68,7 @@ services:
             - ENVIRONMENT=production
         networks:
             - mongodb_network
+            - rabbit_network
         depends_on:
             - mongodb
             - rabbitmq

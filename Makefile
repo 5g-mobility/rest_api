@@ -33,6 +33,10 @@ migrate: ## Make and run migrations
 db-up: ## Pull and start the Docker MongoDB container in the background
 	cd mongodb && docker-compose up -d
 
+.PHONY: rabbit-up
+rabbit-up: ## Pull and start the Docker RabbitMQ container in the background
+	cd rabbitmq && docker-compose up -d
+
 .PHONY: volume-down
 volume-down: ## Remove volume of MongoDB Container
 	docker volume rm mongodb-data
@@ -49,4 +53,6 @@ test: ## Run tests
 run: ## Run the Django server
 	$(PYTHON) manage.py runserver
 
-start: db-up install migrate run ## Install requirements, apply migrations, then start development server
+start: db-up rabbit-up install migrate run ## Install requirements, apply migrations, then start development server
+
+dev: db-up rabbit-up #Star dev environment

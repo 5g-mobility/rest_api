@@ -4,9 +4,9 @@ import os
 from celery import Celery
 
 # set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'projectname.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'rest_api.settings')
 
-app = Celery('mobility_5g_rest_api')
+app = Celery('rest_api')
 
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.
