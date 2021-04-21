@@ -80,9 +80,11 @@ services:
         depends_on:
             - rabbitmq
             - redis
+            - mongodb
         networks:
             - rabbit_network
             - redis_network
+            - mongodb_network
     flower:
         image: mher/flower:0.9.7
         container_name: flower
