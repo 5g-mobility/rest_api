@@ -103,8 +103,8 @@ DATABASES = {
         'CLIENT': {
             'host': os.environ.get('DB_HOST', 'localhost'),
             'port': os.environ.get('DB_PORT', 27017),
-            'username': os.environ.get('DB_USER', 'django'),
-            'password': os.environ.get('DB_PASSWORD', 'djangopass'),
+            'username': os.environ.get('DB_USER', 'admin'),
+            'password': os.environ.get('DB_PASSWORD', 'admin'),
             'authSource': os.environ.get('DB_AUTH', 'admin')
         },
         'TEST': {
