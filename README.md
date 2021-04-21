@@ -1,12 +1,98 @@
-# rest-api
 
+# 5G Mobility REST API
 
-Tests based on: 
-- [https://www.freecodecamp.org/news/increase-developer-confidence-with-a-great-django-test-suite](https://www.freecodecamp.org/news/increase-developer-confidence-with-a-great-django-test-suite/)
-- [https://docs.djangoproject.com/en/3.1/topics/testing/](https://docs.djangoproject.com/en/3.1/topics/testing/)
-- [https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Testing](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Testing)
-- [https://medium.com/intelligentmachines/github-actions-end-to-end-ci-cd-pipeline-for-django-5d48d6f00abf](https://medium.com/intelligentmachines/github-actions-end-to-end-ci-cd-pipeline-for-django-5d48d6f00abf)
+  
 
+Django application with the REST API for the 5G Mobility project, built with DRF, Celery, Djongo...
 
-For MongoDB docker compose:
-- [https://www.bmc.com/blogs/mongodb-docker-container](https://www.bmc.com/blogs/mongodb-docker-container)
+In addition to the Django application, the next services are being used:
+
+- MongoDB
+- Mongo Express (To easily check the db)
+- RabbitMQ (Broker used by Celery)
+- Redis (Backend used by Celery)
+- Celery Workers (To run the tasks)
+- Flower (To monitor the Celery tasks development)
+
+  
+  
+
+## **Running**
+
+  
+
+A **Makefile** was created with all the commands needed to run the application. The following will demonstrate the most important.
+
+  
+
+### **Docker Compose**
+
+  
+
+To facilitate, it is being used Docker Compose to run the multiple services.
+
+  
+
+**Run the development environment** 
+
+In the development environment all the services needed for the Django application are started on Docker containers, letting the user run Django on his personal computer. The following command will start the services containers with one Celery worker:
+
+```
+make dev
+```
+
+**Run the production environment** 
+
+In the production environment all the services are started on Docker containers. The following command will start the services containers with one Celery worker:
+
+```
+make prod
+```
+
+**Run the above with more than one Celery worker**
+
+To customize the number of Celery workers initiated with Docker containers just pass it using the Makefile. The following example will enable 5 Celery workers on the development environment.
+
+```
+make dev workers=5
+```
+  
+
+**Other useful Make commands**
+
+To make a new Python virtual environment:
+
+```
+make venv
+```
+  
+To make a new Python virtual environment (if needed) and install all the requirements:
+
+```
+make install
+```
+
+To make and apply Django migrations:
+
+```
+make migrate
+```
+
+To load initial data (fixtures) into the db :
+
+```
+make fixtures
+```
+
+To run tests on local computer :
+
+```
+make test
+```
+
+To run Django server on local computer :
+
+```
+make run
+```
+  
