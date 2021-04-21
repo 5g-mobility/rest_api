@@ -17,7 +17,7 @@ In addition to the Django application, the next services are being used:
   
   
 
-## Running
+## **Running**
 
   
 
@@ -25,7 +25,7 @@ A **Makefile** was created with all the commands needed to run the application. 
 
   
 
-### Docker Compose
+### **Docker Compose**
 
   
 
