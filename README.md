@@ -35,7 +35,7 @@ To facilitate, it is being used Docker Compose to run the multiple services.
 
 **Run the development environment** 
 
-In the development environment all the services needed for the Django application are started on Docker containers, letting the user run Django on his personal computer. The following command will start the services containers with one Celery worker:
+In the development environment all the services needed for the Django application are started in Docker containers, letting the user run Django on his personal computer. The following command will start the services containers with one Celery worker:
 
 ```
 make dev
