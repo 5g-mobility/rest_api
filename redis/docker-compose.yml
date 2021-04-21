@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+    redis:
+        image: redis:6.2.1
+        command: redis-server --requirepass djangopass
+        container_name: redis
+        restart: unless-stopped
+        volumes:
+            - ./redis.conf:/usr/local/etc/redis/redis.conf
+        ports:
+            - 6379:6379

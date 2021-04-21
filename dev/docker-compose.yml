@@ -8,7 +8,7 @@ services:
             - MONGO_INITDB_ROOT_USERNAME=admin
             - MONGO_INITDB_ROOT_PASSWORD=admin
         volumes:
-            - ./mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+            - ../mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
             - mongodb-data:/data/db
         networks:
             - mongodb_network
@@ -51,8 +51,8 @@ services:
         networks:
             - rabbit_network
         volumes:
-            - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
-            - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+            - ../rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+            - ../rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
         ports:
             - 5672:5672
             - 15672:15672
@@ -62,75 +62,21 @@ services:
         container_name: redis
         restart: unless-stopped
         volumes:
-            - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+            - ../redis/redis.conf:/usr/local/etc/redis/redis.conf
         ports:
             - 6379:6379
         networks:
             - redis_network
-    django:
-        build: .
-        command: python manage.py runserver 0.0.0.0:8000
-        restart: unless-stopped
-        container_name: django
-        volumes:
-            - .:/code
-        ports:
-            - 8000:8000
-        environment:
-            - ENVIRONMENT=production
-        networks:
-            - mongodb_network
-            - rabbit_network
-            - redis_network
-        depends_on:
-            - mongodb
-            - rabbitmq
-            - redis
-    celery-worker-1:
-        build:
-            context: .
-        container_name: celery-worker-1
+    celery-worker:
+        build: ../.
+        container_name: celery-worker
         restart: unless-stopped
         entrypoint: celery
         command: -A rest_api worker --loglevel=info
         environment:
             - ENVIRONMENT=production
         volumes:
-            - .:/var/www/app/worker
-        depends_on:
-            - rabbitmq
-            - redis
-        networks:
-            - rabbit_network
-            - redis_network
-    celery-worker-2:
-        build:
-            context: .
-        container_name: celery-worker-2
-        restart: unless-stopped
-        entrypoint: celery
-        command: -A rest_api worker --loglevel=info
-        environment:
-            - ENVIRONMENT=production
-        volumes:
-            - .:/var/www/app/worker
-        depends_on:
-            - rabbitmq
-            - redis
-        networks:
-            - rabbit_network
-            - redis_network
-    celery-worker-3:
-        build:
-            context: .
-        container_name: celery-worker-3
-        restart: unless-stopped
-        entrypoint: celery
-        command: -A rest_api worker --loglevel=info
-        environment:
-            - ENVIRONMENT=production
-        volumes:
-            - .:/var/www/app/worker
+            - ../.:/var/www/app/worker
         depends_on:
             - rabbitmq
             - redis
@@ -140,10 +86,10 @@ services:
     flower:
         image: mher/flower:0.9.7
         container_name: flower
-        command: ["flower", "--persistent=True",  "--db=/flower/flower", "--basic_auth=admin:admin"]
+        command: ["--persistent=True",  "--db=/flower/flower", "--basic_auth=admin:admin"]
         restart: unless-stopped
         volumes:
-            - ./flower:/flower
+            - ../flower:/flower
         environment:
             - CELERY_BROKER_URL=amqp://django:djangopass@rabbitmq:5672/celery
             - FLOWER_PORT=5555
@@ -151,10 +97,7 @@ services:
             - 5555:5555
         depends_on:
             - rabbitmq
-            - django
-            - celery-worker-1
-            - celery-worker-2
-            - celery-worker-3
+            - celery-worker
         networks:
             - rabbit_network
 
@@ -165,7 +108,7 @@ volumes:
 
 networks:
     mongodb_network:
-        name: mongodb_network
+      name: mongodb_network
     rabbit_network:
         name: rabbit_network
     redis_network:

@@ -37,13 +37,17 @@ db-up: ## Pull and start the Docker MongoDB container in the background
 rabbit-up: ## Pull and start the Docker RabbitMQ container in the background
 	cd rabbitmq && docker-compose up -d
 
+.PHONY: redis-up
+redis-up: ## Pull and start the Docker Redis container in the background
+	cd redis && docker-compose up -d
+
 .PHONY: volume-down
 volume-down: ## Remove volume of MongoDB Container
 	docker volume rm mongodb-data
 
 .PHONY: fixtures
 fixtures: ## Load fixtures
-	$(PYTHON) manage.py loaddata event.json
+	$(PYTHON) manage.py loaddata event.json climate.json dailyinflow.json
 
 .PHONY: test
 test: ## Run tests 
@@ -53,6 +57,9 @@ test: ## Run tests
 run: ## Run the Django server
 	$(PYTHON) manage.py runserver
 
-start: db-up rabbit-up install migrate run ## Install requirements, apply migrations, then start development server
+.PHONY: start
+start: install migrate run ## Install requirements, apply migrations, then start development server
 
-dev: db-up rabbit-up #Star dev environment
+.PHONY: dev
+dev: ## Start all services containers needed for Django
+	cd dev && docker-compose build && docker-compose up -d

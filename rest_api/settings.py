@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'mobility_5g_rest_api.apps.Mobility5GRestApiConfig',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -88,8 +88,12 @@ WSGI_APPLICATION = 'rest_api.wsgi.application'
 
 if 'ENVIRONMENT' in os.environ and os.environ.get('ENVIRONMENT') == 'production':
     DATABASE_HOST = 'mongodb'
+    RABBIT_HOST = 'rabbitmq'
+    REDIS_HOST = 'redis'
 else:
     DATABASE_HOST = 'localhost'
+    RABBIT_HOST = 'localhost'
+    REDIS_HOST = 'localhost'
 
 DATABASES = {
     'default': {
@@ -159,8 +163,10 @@ REST_FRAMEWORK = {
 
 # Celery
 
-CELERY_BROKER_URL = 'amqp://django:djangopass@localhost:5672/celery'
+CELERY_BROKER_URL = 'amqp://django:djangopass@'+RABBIT_HOST+':5672/celery'
+CELERY_RESULT_BACKEND = 'redis://:djangopass@'+REDIS_HOST+':6379/0'
 
+CELERY_TASK_TIME_LIMIT = 10 * 60
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'

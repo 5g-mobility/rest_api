@@ -1,7 +1,7 @@
 // Source
 // https://stackoverflow.com/a/52944387/10735382
 
-db.auth('root', 'rootpass');
+db.auth('admin', 'admin');
 
 db = db.getSiblingDB('5g-mobility');
 
