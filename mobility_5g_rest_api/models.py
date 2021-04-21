@@ -188,7 +188,7 @@ class DailyInflow(models.Model):
         ]
     )
     date = models.DateField(auto_now_add=True)
-    temperature = models.FloatField()
+
     class Meta:
         ordering = ["-date"]
 

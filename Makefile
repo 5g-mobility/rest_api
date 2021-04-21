@@ -39,14 +39,27 @@ volume-down: ## Remove volume of MongoDB Container
 
 .PHONY: fixtures
 fixtures: ## Load fixtures
-	$(PYTHON) manage.py loaddata event.json
+	$(PYTHON) manage.py loaddata event.json climate.json dailyinflow.json
 
 .PHONY: test
 test: ## Run tests 
-	$(PYTHON) manage.py test --verbosity=0 --parallel --failfast
+	$(PYTHON) manage.py test --verbosity=0 --failfast
+
+.PHONY: test-docker
+test-docker: ## Run tests on Docker Container
+	docker-compose run --service-ports -e DB_USER=admin -e DB_PASSWORD=admin -e DB_AUTH=admin django python manage.py test --verbosity=0 --failfast
 
 .PHONY: run
 run: ## Run the Django server
 	$(PYTHON) manage.py runserver
 
-start: db-up install migrate run ## Install requirements, apply migrations, then start development server
+.PHONY: prod
+prod: ## Start all services containers
+	docker-compose build
+	if [[ -z "${workers}" ]]; then docker-compose --profile prod up -d; else docker-compose --profile prod up -d --scale celery-worker=$(workers); fi
+
+.PHONY: dev
+dev: ## Start all services containers needed for Django
+	docker-compose build
+	if [[ -z "${workers}" ]]; then docker-compose up -d; else docker-compose up -d --scale celery-worker=$(workers); fi
+

@@ -23,23 +23,34 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'acgxmke(^6zrw6ke8olhdw1qo4ir8rp!5^a4uszk86j=cs$dcb'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ENVIRONMENT = os.environ.get("ENVIRONMENT", None)
+PRODUCTION = ENVIRONMENT is not None and ENVIRONMENT.lower() == 'production'
+DEBUG = not PRODUCTION
 
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = (
-  'http://localhost:4200',
-)
-
 CORS_ALLOW_METHODS = [
     'GET',
     'OPTIONS',
 ]
 
+if PRODUCTION:
+    print("REST API running in production environment.")
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+    CORS_ORIGIN_WHITELIST = (
+        'http://localhost:4200',
+    )
+else:
+    print("REST API running in development environment.")
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+    CORS_ORIGIN_WHITELIST = (
+        'http://localhost:4200',
+    )
+
+
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_api',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -48,7 +59,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'mobility_5g_rest_api.apps.Mobility5GRestApiConfig',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -85,22 +96,20 @@ WSGI_APPLICATION = 'rest_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-if 'ENVIRONMENT' in os.environ and os.environ.get('ENVIRONMENT') == 'production':
-    DATABASE_HOST = 'mongodb'
-else:
-    DATABASE_HOST = 'localhost'
-
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': '5g-mobility',
+        'NAME': os.environ.get('DB_NAME', '5g-mobility'),
         'CLIENT': {
-            'host': DATABASE_HOST,
-            'port': 27017,
-            'username': 'django',
-            'password': 'djangopass',
-            'authSource': '5g-mobility'
-        }
+            'host': os.environ.get('DB_HOST', 'localhost'),
+            'port': int(os.environ.get('DB_PORT', 27017)),
+            'username': os.environ.get('DB_USER', 'admin'),
+            'password': os.environ.get('DB_PASSWORD', 'admin'),
+            'authSource': os.environ.get('DB_AUTH', 'admin')
+        },
+        'TEST': {
+            'NAME': 'test_' + os.environ.get('DB_NAME', '5g-mobility'),
+        },
     }
 }
 
@@ -133,7 +142,6 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
@@ -156,3 +164,16 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 25,
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
+
+# Celery
+
+CELERY_BROKER_URL = 'amqp://django:djangopass@' + \
+    os.environ.get('RABBIT_HOST', 'localhost')+':5672/celery'
+CELERY_RESULT_BACKEND = 'redis://:djangopass@' + \
+    os.environ.get('REDIS_HOST', 'localhost')+':6379/0'
+
+CELERY_TASK_TIME_LIMIT = 10 * 60
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
