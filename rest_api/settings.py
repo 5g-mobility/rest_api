@@ -90,10 +90,16 @@ if 'ENVIRONMENT' in os.environ and os.environ.get('ENVIRONMENT') == 'production'
     DATABASE_HOST = 'mongodb'
     RABBIT_HOST = 'rabbitmq'
     REDIS_HOST = 'redis'
+    MONGO_USER = 'django'
+    MONGO_PASS = 'djangopass'
+    MONGO_AUTH = '5g-mobility'
 else:
     DATABASE_HOST = 'localhost'
     RABBIT_HOST = 'localhost'
     REDIS_HOST = 'localhost'
+    MONGO_USER = 'admin'
+    MONGO_PASS = 'admin'
+    MONGO_AUTH = 'admin'
 
 DATABASES = {
     'default': {
@@ -102,9 +108,9 @@ DATABASES = {
         'CLIENT': {
             'host': DATABASE_HOST,
             'port': 27017,
-            'username': 'django',
-            'password': 'djangopass',
-            'authSource': '5g-mobility'
+            'username': MONGO_USER,
+            'password': MONGO_PASS,
+            'authSource': MONGO_AUTH
         },
         'TEST': {
             'NAME': 'test_5g-mobility',
