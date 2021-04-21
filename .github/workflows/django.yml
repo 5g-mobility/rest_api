@@ -23,8 +23,6 @@ jobs:
         run: make install
       - name: Make Migrations
         run: make migrate
-      - name: Djongo Fix Dump
-        run: mkdir dump
       - name: Run tests
         run: make test
       - name: Install Lint dependencies
