@@ -69,6 +69,7 @@ services:
             - redis_network
     django:
         build: .
+        profiles: ["prod"]
         command: python manage.py runserver 0.0.0.0:8000
         restart: unless-stopped
         container_name: django
@@ -78,6 +79,14 @@ services:
             - 8000:8000
         environment:
             - ENVIRONMENT=production
+            - DB_NAME=5g-mobility
+            - DB_USER=django
+            - DB_PASSWORD=djangopass
+            - DB_HOST=mongodb
+            - DB_PORT=27017
+            - DB_AUTH=5g-mobility
+            - REDIS_HOST=redis
+            - RABBIT_HOST=rabbitmq
         networks:
             - mongodb_network
             - rabbit_network
@@ -86,55 +95,22 @@ services:
             - mongodb
             - rabbitmq
             - redis
-    celery-worker-1:
+    celery-worker:
         build:
             context: .
-        container_name: celery-worker-1
-        restart: unless-stopped
         entrypoint: celery
         command: -A rest_api worker --loglevel=info
-        environment:
-            - ENVIRONMENT=production
-        volumes:
-            - .:/var/www/app/worker
-        depends_on:
-            - rabbitmq
-            - redis
-            - mongodb
-        networks:
-            - rabbit_network
-            - redis_network
-            - mongodb_network
-    celery-worker-2:
-        build:
-            context: .
-        container_name: celery-worker-2
         restart: unless-stopped
-        entrypoint: celery
-        command: -A rest_api worker --loglevel=info
         environment:
             - ENVIRONMENT=production
-        volumes:
-            - .:/var/www/app/worker
-        depends_on:
-            - rabbitmq
-            - redis
-            - mongodb
-        networks:
-            - rabbit_network
-            - redis_network
-            - mongodb_network
-    celery-worker-3:
-        build:
-            context: .
-        container_name: celery-worker-3
-        restart: unless-stopped
-        entrypoint: celery
-        command: -A rest_api worker --loglevel=info
-        environment:
-            - ENVIRONMENT=production
-        volumes:
-            - .:/var/www/app/worker
+            - DB_NAME=5g-mobility
+            - DB_USER=django
+            - DB_PASSWORD=djangopass
+            - DB_HOST=mongodb
+            - DB_PORT=27017
+            - DB_AUTH=5g-mobility
+            - REDIS_HOST=redis
+            - RABBIT_HOST=rabbitmq
         depends_on:
             - rabbitmq
             - redis
@@ -146,10 +122,11 @@ services:
     flower:
         image: mher/flower:0.9.7
         container_name: flower
-        command: ["flower", "--persistent=True",  "--db=/flower/flower", "--basic_auth=admin:admin"]
+        entrypoint: ["sh", "./entrypoint.sh"]
         restart: unless-stopped
         volumes:
             - ./flower:/flower
+            - ./celery/entrypoint.sh:/data/entrypoint.sh
         environment:
             - CELERY_BROKER_URL=amqp://django:djangopass@rabbitmq:5672/celery
             - FLOWER_PORT=5555
@@ -157,10 +134,7 @@ services:
             - 5555:5555
         depends_on:
             - rabbitmq
-            - django
-            - celery-worker-1
-            - celery-worker-2
-            - celery-worker-3
+            - celery-worker
         networks:
             - rabbit_network
 

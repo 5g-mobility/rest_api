@@ -12,7 +12,7 @@ db.sqlite3
 media
 
 # Flower DB
-/flower/flower
+flower/
 
 ### Linux ###
 *~

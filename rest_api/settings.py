@@ -23,19 +23,29 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'acgxmke(^6zrw6ke8olhdw1qo4ir8rp!5^a4uszk86j=cs$dcb'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ENVIRONMENT = os.environ.get("ENVIRONMENT", None)
+PRODUCTION = ENVIRONMENT is not None and ENVIRONMENT.lower() == 'production'
+DEBUG = not PRODUCTION
 
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = (
-  'http://localhost:4200',
-)
-
 CORS_ALLOW_METHODS = [
     'GET',
     'OPTIONS',
 ]
+
+if PRODUCTION:
+    print("REST API running in production environment.")
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+    CORS_ORIGIN_WHITELIST = (
+        'http://localhost:4200',
+    )
+else:
+    print("REST API running in development environment.")
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+    CORS_ORIGIN_WHITELIST = (
+        'http://localhost:4200',
+    )
+
 
 # Application definition
 
@@ -86,34 +96,19 @@ WSGI_APPLICATION = 'rest_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-if 'ENVIRONMENT' in os.environ and os.environ.get('ENVIRONMENT') == 'production':
-    DATABASE_HOST = 'mongodb'
-    RABBIT_HOST = 'rabbitmq'
-    REDIS_HOST = 'redis'
-    MONGO_USER = 'django'
-    MONGO_PASS = 'djangopass'
-    MONGO_AUTH = '5g-mobility'
-else:
-    DATABASE_HOST = 'localhost'
-    RABBIT_HOST = 'localhost'
-    REDIS_HOST = 'localhost'
-    MONGO_USER = 'admin'
-    MONGO_PASS = 'admin'
-    MONGO_AUTH = 'admin'
-
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': '5g-mobility',
+        'NAME': os.environ.get('DB_NAME', '5g-mobility'),
         'CLIENT': {
-            'host': DATABASE_HOST,
-            'port': 27017,
-            'username': MONGO_USER,
-            'password': MONGO_PASS,
-            'authSource': MONGO_AUTH
+            'host': os.environ.get('DB_HOST', 'localhost'),
+            'port': os.environ.get('DB_PORT', 27017),
+            'username': os.environ.get('DB_USER', 'django'),
+            'password': os.environ.get('DB_PASSWORD', 'djangopass'),
+            'authSource': os.environ.get('DB_AUTH', 'admin')
         },
         'TEST': {
-            'NAME': 'test_5g-mobility',
+            'NAME': 'test_' + os.environ.get('DB_NAME', '5g-mobility'),
         },
     }
 }
@@ -172,12 +167,13 @@ REST_FRAMEWORK = {
 
 # Celery
 
-CELERY_BROKER_URL = 'amqp://django:djangopass@'+RABBIT_HOST+':5672/celery'
-CELERY_RESULT_BACKEND = 'redis://:djangopass@'+REDIS_HOST+':6379/0'
+CELERY_BROKER_URL = 'amqp://django:djangopass@' + \
+    os.environ.get('RABBIT_HOST', 'localhost')+':5672/celery'
+CELERY_RESULT_BACKEND = 'redis://:djangopass@' + \
+    os.environ.get('REDIS_HOST', 'localhost')+':6379/0'
 
 CELERY_TASK_TIME_LIMIT = 10 * 60
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
-

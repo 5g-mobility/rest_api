@@ -33,14 +33,6 @@ migrate: ## Make and run migrations
 db-up: ## Pull and start the Docker MongoDB container in the background
 	cd mongodb && docker-compose up -d
 
-.PHONY: rabbit-up
-rabbit-up: ## Pull and start the Docker RabbitMQ container in the background
-	cd rabbitmq && docker-compose up -d
-
-.PHONY: redis-up
-redis-up: ## Pull and start the Docker Redis container in the background
-	cd redis && docker-compose up -d
-
 .PHONY: volume-down
 volume-down: ## Remove volume of MongoDB Container
 	docker volume rm mongodb-data
@@ -57,9 +49,13 @@ test: ## Run tests
 run: ## Run the Django server
 	$(PYTHON) manage.py runserver
 
-.PHONY: start
-start: install migrate run ## Install requirements, apply migrations, then start development server
+.PHONY: prod
+prod: ## Start all services containers
+	docker-compose build
+	if [[ -z "${workers}" ]]; then docker-compose --profile prod up -d; else docker-compose --profile prod up -d --scale celery-worker=$(workers); fi
 
 .PHONY: dev
 dev: ## Start all services containers needed for Django
-	cd dev && docker-compose build && docker-compose up -d
+	docker-compose build
+	if [[ -z "${workers}" ]]; then docker-compose up -d; else docker-compose up -d --scale celery-worker=$(workers); fi
+
