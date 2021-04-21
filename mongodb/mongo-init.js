@@ -17,10 +17,6 @@ db.createUser(
                 {
                     role: "dbOwner",
                     db: "test_5g-mobility"
-                },
-                {
-                    role: "dbOwner",
-                    db: "test_5g-mobility_1"
                 }
             ]
         }

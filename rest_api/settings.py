@@ -105,7 +105,10 @@ DATABASES = {
             'username': 'django',
             'password': 'djangopass',
             'authSource': '5g-mobility'
-        }
+        },
+        'TEST': {
+            'NAME': 'test_5g-mobility',
+        },
     }
 }
 
