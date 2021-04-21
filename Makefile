@@ -45,6 +45,10 @@ fixtures: ## Load fixtures
 test: ## Run tests 
 	$(PYTHON) manage.py test --verbosity=0 --parallel --failfast
 
+.PHONY: test-docker
+test-docker: ## Run tests on Docker Container
+	docker-compose run --service-ports -e DB_USER=admin -e DB_PASSWORD=admin -e DB_AUTH=admin django python manage.py test --verbosity=0 --failfast
+
 .PHONY: run
 run: ## Run the Django server
 	$(PYTHON) manage.py runserver

@@ -102,7 +102,7 @@ DATABASES = {
         'NAME': os.environ.get('DB_NAME', '5g-mobility'),
         'CLIENT': {
             'host': os.environ.get('DB_HOST', 'localhost'),
-            'port': os.environ.get('DB_PORT', 27017),
+            'port': int(os.environ.get('DB_PORT', 27017)),
             'username': os.environ.get('DB_USER', 'admin'),
             'password': os.environ.get('DB_PASSWORD', 'admin'),
             'authSource': os.environ.get('DB_AUTH', 'admin')
