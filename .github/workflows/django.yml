@@ -17,8 +17,6 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.9'
-      - name: Remove old Volume
-        run: make volume-down
       - name: Create MongoDB container
         run: make db-up
       - name: Install Django dependencies
