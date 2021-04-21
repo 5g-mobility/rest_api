@@ -43,7 +43,7 @@ fixtures: ## Load fixtures
 
 .PHONY: test
 test: ## Run tests 
-	$(PYTHON) manage.py test --verbosity=0 --parallel --failfast
+	$(PYTHON) manage.py test --verbosity=0 --failfast
 
 .PHONY: test-docker
 test-docker: ## Run tests on Docker Container
