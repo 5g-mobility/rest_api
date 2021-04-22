@@ -70,7 +70,7 @@ services:
     django:
         build: .
         profiles: ["prod"]
-        command: python manage.py runserver 0.0.0.0:8000
+        entrypoint: ["sh", "./entrypoint.sh"]
         restart: unless-stopped
         container_name: django
         volumes:
@@ -126,7 +126,7 @@ services:
         restart: unless-stopped
         volumes:
             - ./flower:/flower
-            - ./celery/entrypoint.sh:/data/entrypoint.sh
+            - ./flower/entrypoint.sh:/data/entrypoint.sh
         environment:
             - CELERY_BROKER_URL=amqp://django:djangopass@rabbitmq:5672/celery
             - FLOWER_PORT=5555
