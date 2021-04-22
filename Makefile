@@ -1,4 +1,4 @@
-VENV := env
+VENV := venv
 BIN := $(VENV)/bin
 PYTHON := $(BIN)/python
 SHELL := /bin/bash
@@ -40,6 +40,10 @@ volume-down: ## Remove volume of MongoDB Container
 .PHONY: fixtures
 fixtures: ## Load fixtures
 	$(PYTHON) manage.py loaddata event.json climate.json dailyinflow.json
+
+.PHONY: consumer
+consumer: ## Run MQTT consumer
+	$(PYTHON) manage.py mqtt_consumer
 
 .PHONY: test
 test: ## Run tests 
