@@ -5,8 +5,7 @@
     "fields": {
       "date": "2021-04-15",
       "location": "BA",
-      "maximum": 57,
-      "temperature": 21.1
+      "maximum": 57
     }
   },
     {
@@ -16,8 +15,7 @@
       "date": "2021-04-19",
       "location": "BA",
       "maximum": 62,
-      "current": 24,
-      "temperature": 23.5
+      "current": 24
     }
   }
 ]

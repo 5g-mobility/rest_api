@@ -19,4 +19,4 @@ class ClimateSerializer(serializers.ModelSerializer):
 class DailyInflowSerializer(serializers.ModelSerializer):
     class Meta:
         model = DailyInflow
-        fields = ('date', 'location', 'maximum', 'current', 'temperature')
+        fields = ('date', 'location', 'maximum', 'current')
