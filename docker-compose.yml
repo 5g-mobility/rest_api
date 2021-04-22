@@ -75,6 +75,7 @@ services:
         container_name: django
         volumes:
             - .:/code
+            - ./nginx.conf:/etc/nginx/nginx.conf
         ports:
             - 8000:8000
         environment:
