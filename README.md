@@ -78,3 +78,7 @@ To run Django server on local computer :
 
 ``make run``
   
+
+## **REST API Documentation**
+
+Swagger documentation available on the endpoint ``/docs/``
