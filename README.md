@@ -35,64 +35,46 @@ To facilitate, it is being used Docker Compose to run the multiple services.
 
 **Run the development environment** 
 
-In the development environment all the services needed for the Django application are started on Docker containers, letting the user run Django on his personal computer. The following command will start the services containers with one Celery worker:
+In the development environment all the services needed for the Django application are started in Docker containers, letting the user run Django on his personal computer. The following command will start the services containers with one Celery worker:
 
-```
-make dev
-```
+``make dev``
 
 **Run the production environment** 
 
 In the production environment all the services are started on Docker containers. The following command will start the services containers with one Celery worker:
 
-```
-make prod
-```
+``make prod``
 
 **Run the above with more than one Celery worker**
 
 To customize the number of Celery workers initiated with Docker containers just pass it using the Makefile. The following example will enable 5 Celery workers on the development environment.
 
-```
-make dev workers=5
-```
+``make dev workers=5``
   
 
 **Other useful Make commands**
 
 To make a new Python virtual environment:
 
-```
-make venv
-```
+``make venv``
   
 To make a new Python virtual environment (if needed) and install all the requirements:
 
-```
-make install
-```
+``make install``
 
 To make and apply Django migrations:
 
-```
-make migrate
-```
+``make migrate``
 
 To load initial data (fixtures) into the db :
 
-```
-make fixtures
-```
+``make fixtures``
 
 To run tests on local computer :
 
-```
-make test
-```
+``make test``
 
 To run Django server on local computer :
 
-```
-make run
-```
+``make run``
   
