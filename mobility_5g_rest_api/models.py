@@ -212,6 +212,13 @@ class RadarEvent(models.Model):
         ("MB", "Motorbike"),
         ("TR", "Truck")
     ]
+
+    RADAR = [
+        ("DN", "dunaMeio"),
+        ("RA", "riaAtiva"),
+        ("PT", "ponte")
+    ]
+
     timestamp = models.DateTimeField(auto_now_add=True)
     velocity = models.IntegerField(
         validators=[
@@ -225,7 +232,9 @@ class RadarEvent(models.Model):
     longitude = models.FloatField(
         validators=[MinValueValidator(-180.0), MaxValueValidator(180)], blank=True
     )
-    radar_id = models.IntegerField # terá um range de valores?
+
+    # "radar_id": "riaAtiva", "radar_id": "dunaMeio", "radar_id": "ponte"
+    radar_id = models.IntegerField(max_length=2, choices=RADAR)
     classe = models.CharField(max_length=2, choices=CLASSES)
 
 

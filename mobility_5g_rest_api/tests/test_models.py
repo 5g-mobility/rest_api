@@ -3,7 +3,7 @@ from django.test import TestCase
 
 from faker import Faker
 
-from mobility_5g_rest_api.models import Event, Climate, DailyInflow
+from mobility_5g_rest_api.models import Event, Climate, DailyInflow, RadarEvent
 
 fake = Faker()
 
@@ -223,4 +223,22 @@ class DailyInflowTest(TestCase):
 
 class RadarEventTest(TestCase):
     def test_event_creation(self):
+        velocity = fake.pydecimal(2, 2, False, -400, 400)
+        latitude = fake.pydecimal(2, 2, False, -90, 90)
+        longitude = fake.pydecimal(3, 2, False, -180, 180)
+        radar_id = "DN"
+        classe = "CA"
 
+        r_event = RadarEvent.objects.create(
+            velocity=velocity,
+            latitude=latitude,
+            longitude=longitude,
+            radar_id=radar_id,
+            classe=classe
+        )
+
+        self.assertEquals(r_event.velocity, velocity, "Velocity not equal!")
+        self.assertEquals(r_event.latitude, latitude, "Latitude not equal!")
+        self.assertEquals(r_event.longitude, longitude, "Longitude not equal!")
+        self.assertEquals(r_event.radar_id, radar_id, "Radar_id not equal!")
+        self.assertEquals(r_event.classe, classe, "Classe not equal!")
