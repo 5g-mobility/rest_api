@@ -33,26 +33,34 @@ migrate: ## Make and run migrations
 db-up: ## Pull and start the Docker MongoDB container in the background
 	cd mongodb && docker-compose up -d
 
-.PHONY: rabbit-up
-rabbit-up: ## Pull and start the Docker RabbitMQ container in the background
-	cd rabbitmq && docker-compose up -d
-
 .PHONY: volume-down
 volume-down: ## Remove volume of MongoDB Container
 	docker volume rm mongodb-data
 
 .PHONY: fixtures
 fixtures: ## Load fixtures
-	$(PYTHON) manage.py loaddata event.json
+	$(PYTHON) manage.py loaddata event.json climate.json dailyinflow.json
 
 .PHONY: test
 test: ## Run tests 
-	$(PYTHON) manage.py test --verbosity=0 --parallel --failfast
+	$(PYTHON) manage.py test --verbosity=0 --failfast
+
+.PHONY: test-docker
+test-docker: ## Run tests on Docker Container
+	docker-compose run --service-ports -e DB_USER=admin -e DB_PASSWORD=admin -e DB_AUTH=admin django python manage.py test --verbosity=0 --failfast
 
 .PHONY: run
 run: ## Run the Django server
 	$(PYTHON) manage.py runserver
 
-start: db-up rabbit-up install migrate run ## Install requirements, apply migrations, then start development server
+.PHONY: prod
+prod: ## Start all services containers
+	docker-compose build django
+	docker-compose build
+	if [[ -z "${workers}" ]]; then docker-compose --profile prod up -d; else docker-compose --profile prod up -d --scale celery-worker=$(workers); fi
 
-dev: db-up rabbit-up #Star dev environment
+.PHONY: dev
+dev: ## Start all services containers needed for Django
+	docker-compose build
+	if [[ -z "${workers}" ]]; then docker-compose up -d; else docker-compose up -d --scale celery-worker=$(workers); fi
+
