@@ -41,8 +41,8 @@ volume-down: ## Remove volume of MongoDB Container
 fixtures: ## Load fixtures
 	$(PYTHON) manage.py loaddata event.json climate.json dailyinflow.json
 
-.PHONY: consumer
-consumer: ## Run MQTT consumer
+.PHONY: mqtt-consumer
+mqtt-consumer: ## Run MQTT consumer
 	$(PYTHON) manage.py mqtt_consumer
 
 .PHONY: test

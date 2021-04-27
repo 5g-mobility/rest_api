@@ -7,12 +7,13 @@ class Command(BaseCommand):
     help = 'Runs the MQTT Consumer'
 
     def add_arguments(self, parser):
-        parser.add_argument('broker_url', nargs='?', type=str)
-        parser.add_argument('broker_port', nargs='?', type=int)
-        parser.add_argument('client_id', nargs='?', type=str)
-        parser.add_argument('topic', nargs='?', type=str)
+        parser.add_argument('--broker_url', nargs='?', type=str)
+        parser.add_argument('--broker_port', nargs='?', type=int)
+        parser.add_argument('--client_id', nargs='?', type=str)
+        parser.add_argument('--topic', nargs='?', type=str)
 
     def handle(self, *args, **options):
+        print("Starting MQTT Consumer")
         client = mqtt.Client(options.get("client_id") or "5g-mobility-consumer")
         client.on_connect = self.on_connect
         client.on_disconnect = self.on_disconnect
