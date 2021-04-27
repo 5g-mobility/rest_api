@@ -234,7 +234,7 @@ class RadarEvent(models.Model):
     )
 
     # "radar_id": "riaAtiva", "radar_id": "dunaMeio", "radar_id": "ponte"
-    radar_id = models.IntegerField(max_length=2, choices=RADAR)
+    radar_id = models.CharField(max_length=2, choices=RADAR)
     classe = models.CharField(max_length=2, choices=CLASSES)
 
 
