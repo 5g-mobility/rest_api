@@ -13,6 +13,7 @@ In addition to the Django application, the next services are being used:
 - Redis (Backend used by Celery)
 - Celery Workers (To run the tasks)
 - Flower (To monitor the Celery tasks development)
+- MQTT Consumer (To receive the data from the car simulation and radars)
 
   
   
