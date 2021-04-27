@@ -138,6 +138,15 @@ services:
             - celery-worker
         networks:
             - rabbit_network
+    mqtt-consumer:
+        build:
+            context: .
+        entrypoint: ["python", "manage.py", "mqtt_consumer"]
+        restart: unless-stopped
+        depends_on:
+            - mongodb
+        networks:
+            - mongodb_network
 
 
 volumes:
