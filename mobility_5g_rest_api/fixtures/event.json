@@ -19,8 +19,8 @@
         "fields": {
             "timestamp": "2021-04-15 16:32:04.446530",
             "location": "BA",
-            "event_type": "RD",
-            "event_class": "SC",
+            "event_type": "RT",
+            "event_class": "TR",
             "velocity": 0,
             "latitude": 65,
             "longitude": 120
@@ -31,8 +31,8 @@
         "fields": {
             "timestamp": "2021-04-15 16:33:04.446530",
             "location": "BA",
-            "event_type": "RD",
-            "event_class": "SC",
+            "event_type": "RT",
+            "event_class": "MC",
             "velocity": 120,
             "latitude": 65,
             "longitude": 120
@@ -43,8 +43,8 @@
         "fields": {
             "timestamp": "2021-04-16 16:33:04.446530",
             "location": "BA",
-            "event_type": "RD",
-            "event_class": "SC",
+            "event_type": "RT",
+            "event_class": "CA",
             "velocity": 120,
             "latitude": 65,
             "longitude": 120
@@ -55,8 +55,8 @@
         "fields": {
             "timestamp": "2021-04-17 16:33:04.446530",
             "location": "BA",
-            "event_type": "RD",
-            "event_class": "SC",
+            "event_type": "RT",
+            "event_class": "MC",
             "velocity": 70,
             "latitude": 65,
             "longitude": 120
@@ -67,8 +67,8 @@
         "fields": {
             "timestamp": "2021-04-18 16:33:04.446530",
             "location": "BA",
-            "event_type": "RD",
-            "event_class": "SC",
+            "event_type": "RT",
+            "event_class": "TR",
             "velocity": 175,
             "latitude": 65,
             "longitude": 120
@@ -79,8 +79,8 @@
         "fields": {
             "timestamp": "2021-04-19 16:33:04.446530",
             "location": "BA",
-            "event_type": "RD",
-            "event_class": "SC",
+            "event_type": "RT",
+            "event_class": "CA",
             "velocity": 143,
             "latitude": 65,
             "longitude": 120
@@ -91,8 +91,8 @@
         "fields": {
             "timestamp": "2021-04-20 16:33:04.446530",
             "location": "BA",
-            "event_type": "RD",
-            "event_class": "SC",
+            "event_type": "RT",
+            "event_class": "CA",
             "velocity": 120,
             "latitude": 65,
             "longitude": 120
@@ -103,8 +103,8 @@
         "fields": {
             "timestamp": "2021-04-20 16:33:04.446530",
             "location": "BA",
-            "event_type": "RD",
-            "event_class": "SC",
+            "event_type": "RT",
+            "event_class": "CA",
             "velocity": 121,
             "latitude": 65,
             "longitude": 120
@@ -115,8 +115,8 @@
         "fields": {
             "timestamp": "2021-04-21 16:33:04.446530",
             "location": "BA",
-            "event_type": "RD",
-            "event_class": "SC",
+            "event_type": "RT",
+            "event_class": "CA",
             "velocity": 85,
             "latitude": 65,
             "longitude": 120
@@ -127,8 +127,8 @@
         "fields": {
             "timestamp": "2021-04-22 16:33:04.446530",
             "location": "BA",
-            "event_type": "RD",
-            "event_class": "SC",
+            "event_type": "RT",
+            "event_class": "CA",
             "velocity": 126,
             "latitude": 65,
             "longitude": 120
@@ -139,8 +139,8 @@
         "fields": {
             "timestamp": "2021-04-23 16:33:04.446530",
             "location": "BA",
-            "event_type": "RD",
-            "event_class": "SC",
+            "event_type": "RT",
+            "event_class": "MC",
             "velocity": 158,
             "latitude": 65,
             "longitude": 120
@@ -151,8 +151,8 @@
         "fields": {
             "timestamp": "2021-04-24 16:33:04.446530",
             "location": "BA",
-            "event_type": "RD",
-            "event_class": "SC",
+            "event_type": "RT",
+            "event_class": "MC",
             "velocity": 172,
             "latitude": 65,
             "longitude": 120
@@ -163,8 +163,8 @@
         "fields": {
             "timestamp": "2021-04-25 16:33:04.446530",
             "location": "BA",
-            "event_type": "RD",
-            "event_class": "SC",
+            "event_type": "RT",
+            "event_class": "TR",
             "velocity": 120,
             "latitude": 65,
             "longitude": 120
