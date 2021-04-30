@@ -227,18 +227,18 @@ class RadarEventTest(TestCase):
         latitude = fake.pydecimal(2, 2, False, -90, 90)
         longitude = fake.pydecimal(3, 2, False, -180, 180)
         radar_id = "DN"
-        classe = "CA"
+        object_class = "CA"
 
         r_event = RadarEvent.objects.create(
             velocity=velocity,
             latitude=latitude,
             longitude=longitude,
             radar_id=radar_id,
-            classe=classe
+            object_class=object_class
         )
 
         self.assertEquals(r_event.velocity, velocity, "Velocity not equal!")
         self.assertEquals(r_event.latitude, latitude, "Latitude not equal!")
         self.assertEquals(r_event.longitude, longitude, "Longitude not equal!")
         self.assertEquals(r_event.radar_id, radar_id, "Radar_id not equal!")
-        self.assertEquals(r_event.classe, classe, "Classe not equal!")
+        self.assertEquals(r_event.object_class, object_class, "Object Class not equal!")

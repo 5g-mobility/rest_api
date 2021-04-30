@@ -214,12 +214,12 @@ class RadarEvent(models.Model):
     ]
 
     RADAR = [
-        ("DN", "dunaMeio"),
-        ("RA", "riaAtiva"),
-        ("PT", "ponte")
+        ("DN", "Duna"),
+        ("RA", "Ria Ativa"),
+        ("PT", "Ponte Barra")
     ]
 
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField()
     velocity = models.IntegerField(
         validators=[
             MaxValueValidator(400),
@@ -233,22 +233,6 @@ class RadarEvent(models.Model):
         validators=[MinValueValidator(-180.0), MaxValueValidator(180)], blank=True
     )
 
-    # "radar_id": "riaAtiva", "radar_id": "dunaMeio", "radar_id": "ponte"
     radar_id = models.CharField(max_length=2, choices=RADAR)
-    classe = models.CharField(max_length=2, choices=CLASSES)
+    object_class = models.CharField(max_length=2, choices=CLASSES)
 
-
-
-# Event
-# - ID
-# - Timestamp
-# - Location (Ponte, Ria...) ou (Costa Nova/Barra) para carbonfootprint
-# - Type (Road_Traffic, Road_danger, Bike_Lanes, Conditions, Carbon_Footprint)
-# - Class
-#     - Animal, Person, Strange_Objects, Stopped_car - > Road_danger_event
-#     - Cars, bikes, moto, camião -> Road_Traffic_Event
-#     - Bike (Animal & Person) -> Bike_Lanes_Event
-#     - Rain, fog, no_light, car_speeding -> Conditions_Event
-# - Velocity
-# - GeoLocation (só para conditions e carbonfooprint)
-# - co2/km (só para carbonfootprint)
