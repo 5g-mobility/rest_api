@@ -31,7 +31,7 @@ migrate: ## Make and run migrations
 
 .PHONY: db-up
 db-up: ## Pull and start the Docker MongoDB container in the background
-	cd mongodb && docker-compose up -d && cd .. && make migrate
+	cd mongodb && docker-compose up -d
 
 .PHONY: volume-down
 volume-down: ## Remove volume of MongoDB Container
