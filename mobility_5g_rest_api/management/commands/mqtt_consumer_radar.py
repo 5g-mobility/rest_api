@@ -14,7 +14,7 @@ class Command(BaseCommand):
         super().__init__(stdout, stderr, no_color, force_color)
         self.old_perceived_objects = {}
         self.popped = []
-        self.checkpoint = (41.2400078,-8.6950224)
+        self.checkpoint = (41.2400078, -8.6950224)
         self.sec_epoch_2004 = int((datetime.datetime(2004, 1, 1) - datetime.datetime(1970, 1, 1)).total_seconds())
 
     def add_arguments(self, parser):
@@ -108,11 +108,6 @@ class Command(BaseCommand):
 
             print(average_speed, average_latitude, average_longitude, timestamp)
             self.old_perceived_objects.pop(obj_id_to_db)
-
-
-
-
-
 
     def on_connect(self, client, userdata, flags, rc):
         self.stdout.write(self.style.SUCCESS("Connected With Result Code: {}".format(rc)))
