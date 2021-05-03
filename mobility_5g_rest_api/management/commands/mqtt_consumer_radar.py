@@ -20,6 +20,8 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--broker_url', nargs=1, type=str, required=True)
         parser.add_argument('--broker_port', nargs=1, type=int, required=True)
+        parser.add_argument('--broker_user', nargs=1, type=str, required=False)
+        parser.add_argument('--broker_pw', nargs=1, type=str, required=False)
         parser.add_argument('--client_id', nargs=1, type=str, required=True)
         parser.add_argument('--topic', nargs=1, type=str, required=True)
 
@@ -27,6 +29,8 @@ class Command(BaseCommand):
         print("Starting MQTT Consumer")
 
         client = mqtt.Client(options.get("client_id")[0])
+        if options.get("broker_user") and options.get("broker_pw"):
+            client.username_pw_set(options.get("broker_user")[0], options.get("broker_pw")[0])
         client.on_connect = self.on_connect
         client.on_disconnect = self.on_disconnect
         client.connect(options.get("broker_url")[0], options.get("broker_port")[0])
@@ -64,10 +68,10 @@ class Command(BaseCommand):
                 print("Object deleted is reappearing!!")
                 print(object_id)
                 quit()
-            x_distance = obj["xDistance"]
-            y_distance = obj["yDistance"]
-            x_speed = obj["xSpeed"]
-            y_speed = obj["ySpeed"]
+            x_distance = obj["xDistance"] * 100
+            y_distance = obj["yDistance"] * 100
+            x_speed = obj["xSpeed"] * 100
+            y_speed = obj["ySpeed"] * 100
             print("\n", object_id, x_distance, y_distance, x_speed, y_speed)
 
             object_ids_this_iteration.append(object_id)
