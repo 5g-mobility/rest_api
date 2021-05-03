@@ -1,5 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from datetime import datetime
+from datetime import date
+
 
 from faker import Faker
 
@@ -15,6 +18,7 @@ class EventTest(TestCase):
         event_class = "CA"
         velocity = fake.random_int(-300, 300)
         ev = Event.objects.create(
+            timestamp=datetime.now(),
             location=location,
             event_type=event_type,
             event_class=event_class,
@@ -30,6 +34,7 @@ class EventTest(TestCase):
         with self.assertRaises(ValidationError, msg={'location': 'Location Barra and Costa Nova are only allowed for '
                                                                  'Conditions events'}):
             Event.objects.create(
+                timestamp=datetime.now(),
                 location="CN",
                 event_type="RT",
                 velocity=fake.random_int(-300, 300)
@@ -40,6 +45,7 @@ class EventTest(TestCase):
             'event_type': 'Event_class Rain, Fog, No Light, Light, Outside Temperature, Car Speeding and Carbon '
                           'Footprint are only allowed for the Conditions event type'}):
             Event.objects.create(
+                timestamp=datetime.now(),
                 location="RA",
                 event_type="RT",
                 event_class="CS",
@@ -50,6 +56,7 @@ class EventTest(TestCase):
         with self.assertRaises(ValidationError, msg={'location': 'Location Ria Ativa, Duna, Ponte da Barra and A25 '
                                                                  'are not allowed for Conditions events'}):
             Event.objects.create(
+                timestamp=datetime.now(),
                 location="RA",
                 event_type="CO",
                 event_class="LT",
@@ -64,6 +71,7 @@ class EventTest(TestCase):
                                    'event_type': 'Event_class Animal and Person are only allowed for the Bike Lanes '
                                                  'or Road Danger event type'}):
             Event.objects.create(
+                timestamp=datetime.now(),
                 location="RA",
                 event_type="RT",
                 event_class="AN",
@@ -76,6 +84,7 @@ class EventTest(TestCase):
                                    'event_type': 'Event_class Bicycle is only allowed for the Bike Lanes or Road '
                                                  'Traffic event type'}):
             Event.objects.create(
+                timestamp=datetime.now(),
                 location="DN",
                 event_type="RD",
                 event_class="BC",
@@ -88,6 +97,7 @@ class EventTest(TestCase):
                                    'event_type': 'Event_class Car, Motorcycle and Truck are only allowed for the Road '
                                                  'Traffics event type'}):
             Event.objects.create(
+                timestamp=datetime.now(),
                 location="PT",
                 event_type="RD",
                 event_class="CA",
@@ -102,6 +112,7 @@ class EventTest(TestCase):
             msg={
                 'longitude': 'Longitude is only allowed when event type is Conditions'}):
             Event.objects.create(
+                timestamp=datetime.now(),
                 location="PT",
                 event_type="RT",
                 event_class="CA",
@@ -112,23 +123,25 @@ class EventTest(TestCase):
     def test_co2_not_allowed_event_type(self):
         with self.assertRaises(ValidationError,
                                msg={
-                                   'co2km': 'CO2km is only allowed when type is Conditions and class is Carbon '
+                                   'co2': 'CO2 is only allowed when type is Conditions and class is Carbon '
                                             'Footprint'}):
             Event.objects.create(
+                timestamp=datetime.now(),
                 location="PT",
                 event_type="CO",
                 event_class="FO",
                 latitude=fake.pydecimal(2, 2, False, -90, 90),
                 longitude=fake.pydecimal(3, 2, False, -180, 180),
-                co2km=fake.pydecimal(3, 2, True),
+                co2=fake.pydecimal(3, 2, True),
                 velocity=fake.random_int(-300, 300)
             )
 
     def test_co2_not_given(self):
         with self.assertRaises(ValidationError,
                                msg={
-                                   'co2km': 'CO2km needs to have value'}):
+                                   'co2': 'CO2 needs to have value'}):
             Event.objects.create(
+                timestamp=datetime.now(),
                 location="PT",
                 event_type="CO",
                 event_class="CF",
@@ -142,6 +155,7 @@ class EventTest(TestCase):
                                msg={
                                    'temperature': 'Temperature needs to have value'}):
             Event.objects.create(
+                timestamp=datetime.now(),
                 location="BA",
                 event_type="CO",
                 event_class="OT",
@@ -156,6 +170,7 @@ class EventTest(TestCase):
                                    'temperature': 'Temperature is only allowed when type is Conditions and class '
                                                   'Outside Temperature'}):
             Event.objects.create(
+                timestamp=datetime.now(),
                 location="BA",
                 event_type="CO",
                 event_class="FO",
@@ -171,6 +186,7 @@ class EventTest(TestCase):
                                    'event_type': 'Event_class Strange Objects or Stopped Car are only allowed for '
                                                  'event_type Road Danger'}):
             Event.objects.create(
+                timestamp=datetime.now(),
                 location="PT",
                 event_type="RT",
                 event_class="SO",
@@ -185,6 +201,7 @@ class ClimateTest(TestCase):
         daytime = fake.pybool()
         temperature = fake.pydecimal(2, 2, False)
         cl = Climate.objects.create(
+            timestamp=datetime.now(),
             condition=condition,
             daytime=daytime,
             temperature=temperature,
@@ -203,6 +220,7 @@ class DailyInflowTest(TestCase):
         maximum = fake.random_int(100, 300)
         current = fake.random_int(0, 99)
         dl = DailyInflow.objects.create(
+            date=date.today().isoformat(),
             maximum=maximum,
             current=current,
             location=location
@@ -216,6 +234,7 @@ class DailyInflowTest(TestCase):
                                msg={
                                    'maximum': 'Maximum value needs to be higher or equals to current'}):
             DailyInflow.objects.create(
+                date=date.today().isoformat(),
                 maximum=2,
                 current=100,
             )
@@ -230,6 +249,7 @@ class RadarEventTest(TestCase):
         object_class = "CA"
 
         r_event = RadarEvent.objects.create(
+            timestamp=datetime.now(),
             velocity=velocity,
             latitude=latitude,
             longitude=longitude,
