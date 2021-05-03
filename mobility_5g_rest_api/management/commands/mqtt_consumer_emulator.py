@@ -38,8 +38,6 @@ class Command(BaseCommand):
         print("\n CALMEX \n")
         json_msg = json.loads(str(message.payload.decode("utf-8")))
 
-        location = None
-
         vehicle_id = json_msg["vehicle_id"]
         timestamp = json_msg["tm"]
         latitude = json_msg["latitude"][0]
@@ -69,15 +67,86 @@ class Command(BaseCommand):
 
         if vehicle_id not in self.last_vehicle_status:
             self.last_vehicle_status[vehicle_id] = [air_temperature, light_sensor, rain_sensor, fog_light_sensor]
+
+            Event.objects.create(location=location,
+                                 timestamp=timestamp,
+                                 event_type="CO",
+                                 event_class="OT",
+                                 latitude=latitude,
+                                 longitude=longitude,
+                                 velocity=speed,
+                                 temperature=air_temperature)
+
+            if light_sensor:
+                light_event_class = "LT"
+            else:
+                light_event_class = "NT"
+            Event.objects.create(location=location,
+                                 timestamp=timestamp,
+                                 event_type="CO",
+                                 event_class=light_event_class,
+                                 latitude=latitude,
+                                 longitude=longitude,
+                                 velocity=speed)
+
+            if rain_sensor:
+                Event.objects.create(location=location,
+                                     timestamp=timestamp,
+                                     event_type="RA",
+                                     event_class=light_event_class,
+                                     latitude=latitude,
+                                     longitude=longitude,
+                                     velocity=speed)
+
+            if fog_light_sensor:
+                Event.objects.create(location=location,
+                                     timestamp=timestamp,
+                                     event_type="FO",
+                                     event_class=light_event_class,
+                                     latitude=latitude,
+                                     longitude=longitude,
+                                     velocity=speed)
         else:
-            if air_temperature != self.last_vehicle_status[vehicle_id][0]:
-                pass
+            if abs(air_temperature - self.last_vehicle_status[vehicle_id][0]) > 1.5:
+                self.last_vehicle_status[vehicle_id][0] = air_temperature
+                Event.objects.create(location=location,
+                                     timestamp=timestamp,
+                                     event_type="CO",
+                                     event_class="OT",
+                                     latitude=latitude,
+                                     longitude=longitude,
+                                     velocity=speed,
+                                     temperature=air_temperature)
             if light_sensor != self.last_vehicle_status[vehicle_id][1]:
-                pass
+                if light_sensor:
+                    light_event_class = "LT"
+                else:
+                    light_event_class = "NT"
+                Event.objects.create(location=location,
+                                     timestamp=timestamp,
+                                     event_type="CO",
+                                     event_class=light_event_class,
+                                     latitude=latitude,
+                                     longitude=longitude,
+                                     velocity=speed)
             if rain_sensor != self.last_vehicle_status[vehicle_id][2]:
-                pass
+                if rain_sensor:
+                    Event.objects.create(location=location,
+                                         timestamp=timestamp,
+                                         event_type="RA",
+                                         event_class=light_event_class,
+                                         latitude=latitude,
+                                         longitude=longitude,
+                                         velocity=speed)
             if fog_light_sensor != self.last_vehicle_status[vehicle_id][3]:
-                pass
+                if fog_light_sensor:
+                    Event.objects.create(location=location,
+                                         timestamp=timestamp,
+                                         event_type="FO",
+                                         event_class=light_event_class,
+                                         latitude=latitude,
+                                         longitude=longitude,
+                                         velocity=speed)
 
         if co2_emissions > 0:
             Event.objects.create(location=location,
@@ -86,6 +155,7 @@ class Command(BaseCommand):
                                  event_class="CF",
                                  latitude=latitude,
                                  longitude=longitude,
+                                 velocity=speed,
                                  co2=co2_emissions)
 
         if speed > 90:
