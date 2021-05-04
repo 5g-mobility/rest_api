@@ -44,7 +44,9 @@ class Command(BaseCommand):
         print("\n New Message \n")
         sec_time_since_2004 = int((datetime.datetime.utcnow() - datetime.datetime(2004, 1, 1)).total_seconds() * 1000)
         multiplier = math.floor(sec_time_since_2004 / 65536)
+
         json_msg = json.loads(str(message.payload.decode("utf-8")))
+
 
         station_id = json_msg["station_id"]
         timestamp_delta = json_msg["timestamp_delta"]
@@ -68,10 +70,10 @@ class Command(BaseCommand):
                 print("Object deleted is reappearing!!")
                 print(object_id)
                 quit()
-            x_distance = obj["xDistance"] * 100
-            y_distance = obj["yDistance"] * 100
-            x_speed = obj["xSpeed"] * 100
-            y_speed = obj["ySpeed"] * 100
+            x_distance = obj["xDistance"] / 100
+            y_distance = obj["yDistance"] / 100
+            x_speed = obj["xSpeed"] / 100
+            y_speed = obj["ySpeed"] / 100
             print("\n", object_id, x_distance, y_distance, x_speed, y_speed)
 
             object_ids_this_iteration.append(object_id)
@@ -82,6 +84,7 @@ class Command(BaseCommand):
             vector_distance_object = math.sqrt(x_distance * 2 + y_distance ** 2) / 1000
             object_position = geopy.distance.distance(kilometers=vector_distance_object) \
                 .destination((latitude, longitude), bearing=angle_of_object)
+            print(time_in_radar_epoch)
             print(speed, object_position.latitude, object_position.longitude)
 
             if object_id not in self.old_perceived_objects:
@@ -91,7 +94,8 @@ class Command(BaseCommand):
                 self.old_perceived_objects[object_id][1].append(speed)
                 self.old_perceived_objects[object_id][2].append(object_position)
 
-        for obj_id_to_db in [obj_id for obj_id in self.old_perceived_objects if obj_id not in object_ids_this_iteration]:
+        for obj_id_to_db in [obj_id for obj_id in self.old_perceived_objects if
+                             obj_id not in object_ids_this_iteration]:
             print(obj_id_to_db)
             self.popped.append(obj_id_to_db)
 
@@ -104,8 +108,9 @@ class Command(BaseCommand):
             longitude_list = [position.longitude for position in self.old_perceived_objects[obj_id_to_db][2]]
             average_longitude = sum(longitude_list) / len(longitude_list)
 
-            distances_to_checkpoint = [geopy.distance.distance((position.latitude, position.longitude), self.checkpoint).km
-                                       for position in self.old_perceived_objects[obj_id_to_db][2]]
+            distances_to_checkpoint = [
+                geopy.distance.distance((position.latitude, position.longitude), self.checkpoint).km
+                for position in self.old_perceived_objects[obj_id_to_db][2]]
             timestamp_pos = distances_to_checkpoint.index(min(distances_to_checkpoint))
 
             timestamp = self.old_perceived_objects[object_id][0][timestamp_pos]
