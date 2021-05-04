@@ -64,12 +64,12 @@ class Command(BaseCommand):
         client.loop_forever()
 
     def on_message(self, client, userdata, message):
-        print("\n CALMEX \n")
+        print("\nNew Message\n")
         json_msg = json.loads(str(message.payload.decode("utf-8")))
 
         vehicle_id = json_msg["vehicle_id"]
         timestamp = json_msg["tm"]
-        latitude = json_msg["latitude"][0]
+        latitude = json_msg["position"][0]
         longitude = json_msg["position"][1]
         co2_emissions = json_msg["co2_emissions"]
         speed = json_msg["speed"]
@@ -78,6 +78,8 @@ class Command(BaseCommand):
         rain_sensor = json_msg["rain_sensor"]
         fog_light_sensor = json_msg["fog_light_sensor"]
 
+        print(vehicle_id, timestamp, latitude, longitude, co2_emissions, speed, air_temperature, light_sensor, rain_sensor, fog_light_sensor)
+
         if self.barra_lat_lon_boundaries[0][1] <= latitude <= self.barra_lat_lon_boundaries[0][0]:
             location = "BA"
         elif self.costa_lat_lon_boundaries[0][1] <= latitude <= self.costa_lat_lon_boundaries[0][0]:
@@ -85,10 +87,10 @@ class Command(BaseCommand):
         else:
             return
 
-        if self.barra_lat_lon_boundaries[1][1] <= longitude <= self.barra_lat_lon_boundaries[1][0]:
+        if self.barra_lat_lon_boundaries[1][0] <= longitude <= self.barra_lat_lon_boundaries[1][1]:
             if location == "CN":
                 return
-        elif self.costa_lat_lon_boundaries[1][1] <= longitude <= self.costa_lat_lon_boundaries[1][0]:
+        elif self.costa_lat_lon_boundaries[1][0] <= longitude <= self.costa_lat_lon_boundaries[1][1]:
             if location == "BA":
                 return
         else:

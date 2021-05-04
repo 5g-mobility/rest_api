@@ -152,7 +152,7 @@ services:
     mqtt-consumer-emulator:
         build:
             context: .
-        entrypoint: [ "python", "manage.py", "mqtt_consumer_radar", "--broker_url", "broker.es.av.it.pt",
+        entrypoint: [ "python", "manage.py", "mqtt_consumer_emulator", "--broker_url", "broker.es.av.it.pt",
                       "--broker_port", "1883", "--client_id", "5g-mobility-consumer-emulator",
                       "--topic", "its_center/inqueue/5g-mobility" ]
         restart: unless-stopped
