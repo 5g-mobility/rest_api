@@ -214,9 +214,9 @@ class Command(BaseCommand):
                                      latitude=latitude,
                                      longitude=longitude,
                                      velocity=speed,
-                                     co2=self.last_vehicle_status[vehicle_id][4])
+                                     co2=round(self.last_vehicle_status[vehicle_id][4], 2))
 
-        if speed > 90:
+        if speed > 100:
             Event.objects.create(location=location,
                                  timestamp=timestamp,
                                  latitude=latitude,
@@ -252,7 +252,7 @@ class Command(BaseCommand):
                                              latitude=self.last_vehicle_status[car][7],
                                              longitude=self.last_vehicle_status[car][8],
                                              velocity=self.last_vehicle_status[car][9],
-                                             co2=self.last_vehicle_status[car][4])
+                                             co2=round(self.last_vehicle_status[car][4], 2))
                     del self.last_vehicle_status[car]
 
     def update_climate(self):
