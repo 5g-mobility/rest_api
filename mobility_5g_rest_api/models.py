@@ -38,7 +38,7 @@ class Event(models.Model):
         ("CF", "Carbon Footprint")
     ]
 
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField()
     location = models.CharField(max_length=2, choices=LOCATION)
     event_type = models.CharField(max_length=2, choices=EVENT_TYPE)
     event_class = models.CharField(
@@ -55,7 +55,7 @@ class Event(models.Model):
     longitude = models.FloatField(
         validators=[MinValueValidator(-180.0), MaxValueValidator(180)], blank=True
     )
-    co2km = models.FloatField(blank=True, validators=[MinValueValidator(0.0)])
+    co2 = models.FloatField(blank=True, validators=[MinValueValidator(0.0)])
     temperature = models.FloatField(blank=True)
 
     class Meta:
@@ -106,9 +106,9 @@ class Event(models.Model):
             raise ValidationError(
                 {'longitude': "Longitude is only allowed when event type Conditions"})
 
-        if (self.event_type != "CO" or (self.event_type == "CO" and self.event_class != "CF")) and self.co2km:
+        if (self.event_type != "CO" or (self.event_type == "CO" and self.event_class != "CF")) and self.co2:
             raise ValidationError(
-                {'co2km': "CO2km is only allowed when type is Conditions and class is Carbon Footprint"})
+                {'co2': "CO2 is only allowed when type is Conditions and class is Carbon Footprint"})
 
         if self.event_type == "CO" and not self.latitude:
             raise ValidationError(
@@ -118,9 +118,9 @@ class Event(models.Model):
             raise ValidationError(
                 {'longitude': "Longitude needs to have value"})
 
-        if self.event_type == "CO" and self.event_class == "CF" and not self.co2km:
+        if self.event_type == "CO" and self.event_class == "CF" and not self.co2:
             raise ValidationError(
-                {'co2km': "CO2km needs to have value"})
+                {'co2': "CO2 needs to have value"})
 
         if self.event_type == "CO" and self.event_class == "OT" and not self.temperature:
             raise ValidationError(
@@ -187,7 +187,7 @@ class DailyInflow(models.Model):
             MinValueValidator(0)
         ]
     )
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField()
 
     class Meta:
         ordering = ["-date"]
@@ -214,12 +214,12 @@ class RadarEvent(models.Model):
     ]
 
     RADAR = [
-        ("DN", "dunaMeio"),
-        ("RA", "riaAtiva"),
-        ("PT", "ponte")
+        ("DN", "Duna"),
+        ("RA", "Ria Ativa"),
+        ("PT", "Ponte Barra")
     ]
 
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField()
     velocity = models.IntegerField(
         validators=[
             MaxValueValidator(400),
@@ -233,22 +233,6 @@ class RadarEvent(models.Model):
         validators=[MinValueValidator(-180.0), MaxValueValidator(180)], blank=True
     )
 
-    # "radar_id": "riaAtiva", "radar_id": "dunaMeio", "radar_id": "ponte"
     radar_id = models.CharField(max_length=2, choices=RADAR)
-    classe = models.CharField(max_length=2, choices=CLASSES)
+    object_class = models.CharField(max_length=2, choices=CLASSES)
 
-
-
-# Event
-# - ID
-# - Timestamp
-# - Location (Ponte, Ria...) ou (Costa Nova/Barra) para carbonfootprint
-# - Type (Road_Traffic, Road_danger, Bike_Lanes, Conditions, Carbon_Footprint)
-# - Class
-#     - Animal, Person, Strange_Objects, Stopped_car - > Road_danger_event
-#     - Cars, bikes, moto, camião -> Road_Traffic_Event
-#     - Bike (Animal & Person) -> Bike_Lanes_Event
-#     - Rain, fog, no_light, car_speeding -> Conditions_Event
-# - Velocity
-# - GeoLocation (só para conditions e carbonfooprint)
-# - co2/km (só para carbonfootprint)

@@ -138,10 +138,23 @@ services:
             - celery-worker
         networks:
             - rabbit_network
-    mqtt-consumer:
+    mqtt-consumer-radar-matosinhos:
         build:
             context: .
-        entrypoint: ["python", "manage.py", "mqtt_consumer"]
+        entrypoint: ["python", "manage.py", "mqtt_consumer_radar", "--broker_url", "ccam.av.it.pt",
+                     "--broker_port", "1883", "--client_id", "5g-mobility-consumer-matosinhos",
+                    "--topic", "its_center/inqueue/cpm/0/3/1/3/3/2/2/3/3/3/0/1/0/0/0/3/0/0/1"]
+        restart: unless-stopped
+        depends_on:
+            - mongodb
+        networks:
+            - mongodb_network
+    mqtt-consumer-emulator:
+        build:
+            context: .
+        entrypoint: [ "python", "manage.py", "mqtt_consumer_emulator", "--broker_url", "broker.es.av.it.pt",
+                      "--broker_port", "1883", "--client_id", "5g-mobility-consumer-emulator",
+                      "--topic", "its_center/inqueue/5g-mobility" ]
         restart: unless-stopped
         depends_on:
             - mongodb
