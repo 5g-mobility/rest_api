@@ -41,7 +41,7 @@ class Command(BaseCommand):
         client.loop_forever()
 
     def on_message(self, client, userdata, message):
-        print("\n CALMEX \n")
+        print("\n New Message \n")
         sec_time_since_2004 = int((datetime.datetime.utcnow() - datetime.datetime(2004, 1, 1)).total_seconds() * 1000)
         multiplier = math.floor(sec_time_since_2004 / 65536)
         json_msg = json.loads(str(message.payload.decode("utf-8")))
