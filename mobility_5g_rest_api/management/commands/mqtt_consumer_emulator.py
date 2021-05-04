@@ -241,7 +241,7 @@ class Command(BaseCommand):
             time.sleep(60 * 10)
             for car in self.last_vehicle_status:
                 actualTime = datetime.datetime.now()
-                if (datetime.datetime.now() - self.last_vehicle_status[car][5]).total_seconds() > 100:
+                if (datetime.datetime.now() - self.last_vehicle_status[car][5]).total_seconds() > 300:
                     if self.last_vehicle_status[car][4] > 0:
                         Event.objects.create(location=self.last_vehicle_status[car][6],
                                              timestamp=actualTime,
@@ -251,6 +251,7 @@ class Command(BaseCommand):
                                              longitude=self.last_vehicle_status[car][8],
                                              velocity=self.last_vehicle_status[car][9],
                                              co2=self.last_vehicle_status[car][4])
+                    del self.last_vehicle_status[car]
 
     def update_climate(self):
         while True:
