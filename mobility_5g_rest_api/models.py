@@ -158,7 +158,7 @@ class Climate(models.Model):
 
     location = models.CharField(max_length=2, choices=LOCATION)
     condition = models.CharField(max_length=2, choices=CONDITION)
-    timestamp = models.DateTimeField()
+    timestamp = models.DateTimeField(auto_now_add=True)
     daytime = models.BooleanField()  # True - Day, False - Night
     temperature = models.FloatField()
 

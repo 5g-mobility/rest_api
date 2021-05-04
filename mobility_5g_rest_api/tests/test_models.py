@@ -201,7 +201,6 @@ class ClimateTest(TestCase):
         daytime = fake.pybool()
         temperature = fake.pydecimal(2, 2, False)
         cl = Climate.objects.create(
-            timestamp=datetime.now(),
             condition=condition,
             daytime=daytime,
             temperature=temperature,
