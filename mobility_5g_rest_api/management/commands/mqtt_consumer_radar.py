@@ -41,7 +41,7 @@ class Command(BaseCommand):
         client.loop_forever()
 
     def on_message(self, client, userdata, message):
-        print("\n New Message \n")
+        #print("\n New Message \n")
         sec_time_since_2004 = int((datetime.datetime.utcnow() - datetime.datetime(2004, 1, 1)).total_seconds() * 1000)
         multiplier = math.floor(sec_time_since_2004 / 65536)
 
@@ -52,13 +52,13 @@ class Command(BaseCommand):
         timestamp_delta = json_msg["timestamp_delta"]
         longitude = json_msg["longitude"] / 10000000
         latitude = json_msg["latitude"] / 10000000
-        print(station_id, timestamp_delta, longitude, latitude)
+        #print(station_id, timestamp_delta, longitude, latitude)
 
         sec_time_in_radar_since_2004 = (65536 * multiplier + timestamp_delta) / 1000
 
         time_in_radar_epoch = datetime.datetime.fromtimestamp(sec_time_in_radar_since_2004 + self.sec_epoch_2004,
                                                               tz=datetime.timezone.utc)
-        print(time_in_radar_epoch)
+        #print(time_in_radar_epoch)
 
         perceived_objects = json_msg["perceived_objects"]
 
@@ -66,14 +66,19 @@ class Command(BaseCommand):
 
         for obj in perceived_objects:
             object_id = obj["objectID"]
-            if object_id in self.popped:
-                print("Object deleted is reappearing!!")
-                print(object_id)
-                quit()
             x_distance = obj["xDistance"] / 100
             y_distance = obj["yDistance"] / 100
             x_speed = obj["xSpeed"] / 100
             y_speed = obj["ySpeed"] / 100
+
+            if x_distance > 10 or y_distance > 45:
+                continue
+
+            if object_id in self.popped:
+                print("Object deleted is reappearing!!")
+                print(object_id)
+                quit()
+
             print("\n", object_id, x_distance, y_distance, x_speed, y_speed)
 
             object_ids_this_iteration.append(object_id)
@@ -84,8 +89,9 @@ class Command(BaseCommand):
             vector_distance_object = math.sqrt(x_distance * 2 + y_distance ** 2) / 1000
             object_position = geopy.distance.distance(kilometers=vector_distance_object) \
                 .destination((latitude, longitude), bearing=angle_of_object)
+            object_position = (object_position.latitude-4.163380242516723e-05, object_position.longitude+-2.1216887722275146e-05)
             print(time_in_radar_epoch)
-            print(speed, object_position.latitude, object_position.longitude)
+            print(speed, str(object_position[0])+","+str(object_position[1]))
 
             if object_id not in self.old_perceived_objects:
                 self.old_perceived_objects[object_id] = ([time_in_radar_epoch], [speed], [object_position])
@@ -100,20 +106,20 @@ class Command(BaseCommand):
             self.popped.append(obj_id_to_db)
 
             speed_list = self.old_perceived_objects[obj_id_to_db][1]
-            average_speed = sum(speed_list) / len(speed_list)
+            average_speed = math.ceil(sum(speed_list) / len(speed_list))
 
-            latitude_list = [position.latitude for position in self.old_perceived_objects[obj_id_to_db][2]]
+            latitude_list = [position[0] for position in self.old_perceived_objects[obj_id_to_db][2]]
             average_latitude = sum(latitude_list) / len(latitude_list)
 
-            longitude_list = [position.longitude for position in self.old_perceived_objects[obj_id_to_db][2]]
+            longitude_list = [position[1] for position in self.old_perceived_objects[obj_id_to_db][2]]
             average_longitude = sum(longitude_list) / len(longitude_list)
 
             distances_to_checkpoint = [
-                geopy.distance.distance((position.latitude, position.longitude), self.checkpoint).km
+                geopy.distance.distance(position, self.checkpoint).km
                 for position in self.old_perceived_objects[obj_id_to_db][2]]
             timestamp_pos = distances_to_checkpoint.index(min(distances_to_checkpoint))
 
-            timestamp = self.old_perceived_objects[object_id][0][timestamp_pos]
+            timestamp = self.old_perceived_objects[obj_id_to_db][0][timestamp_pos]
 
             print(average_speed, average_latitude, average_longitude, timestamp)
             self.old_perceived_objects.pop(obj_id_to_db)
