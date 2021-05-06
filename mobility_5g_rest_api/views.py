@@ -15,7 +15,7 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         'velocity': ['exact', 'lte', 'gte'],
         'latitude': ['exact', 'lte', 'gte'],
         'longitude': ['exact', 'lte', 'gte'],
-        'co2km': ['exact', 'lte', 'gte'],
+        'co2': ['exact', 'lte', 'gte'],
         'temperature': ['exact', 'lte', 'gte'],
     }
 
