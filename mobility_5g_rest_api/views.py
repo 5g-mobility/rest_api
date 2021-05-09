@@ -11,7 +11,7 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         'timestamp': ['exact', 'lte', 'gte'],
         'location': ['exact'],
         'event_type': ['exact'],
-        'event_class': ['exact'],
+        'event_class': ['exact', 'in'],
         'velocity': ['exact', 'lte', 'gte'],
         'latitude': ['exact', 'lte', 'gte'],
         'longitude': ['exact', 'lte', 'gte'],
