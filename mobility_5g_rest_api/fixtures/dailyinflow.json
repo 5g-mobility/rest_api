@@ -7,7 +7,8 @@
       "location": "CN",
       "maximum": 18
     }
-  },{
+  },
+  {
     "model": "mobility_5g_rest_api.DailyInflow",
     "pk": 1,
     "fields": {
@@ -16,7 +17,7 @@
       "maximum": 57
     }
   },
-    {
+  {
     "model": "mobility_5g_rest_api.DailyInflow",
     "pk": 2,
     "fields": {
@@ -24,7 +25,8 @@
       "location": "CN",
       "maximum": 27
     }
-  },{
+  },
+  {
     "model": "mobility_5g_rest_api.DailyInflow",
     "pk": 3,
     "fields": {
@@ -33,7 +35,7 @@
       "maximum": 53
     }
   },
-    {
+  {
     "model": "mobility_5g_rest_api.DailyInflow",
     "pk": 4,
     "fields": {
@@ -41,7 +43,8 @@
       "location": "CN",
       "maximum": 49
     }
-  },{
+  },
+  {
     "model": "mobility_5g_rest_api.DailyInflow",
     "pk": 5,
     "fields": {
@@ -50,7 +53,7 @@
       "maximum": 34
     }
   },
-    {
+  {
     "model": "mobility_5g_rest_api.DailyInflow",
     "pk": 6,
     "fields": {
@@ -58,7 +61,8 @@
       "location": "CN",
       "maximum": 10
     }
-  },{
+  },
+  {
     "model": "mobility_5g_rest_api.DailyInflow",
     "pk": 7,
     "fields": {
@@ -67,7 +71,7 @@
       "maximum": 9
     }
   },
-    {
+  {
     "model": "mobility_5g_rest_api.DailyInflow",
     "pk": 8,
     "fields": {
@@ -75,7 +79,8 @@
       "location": "CN",
       "maximum": 44
     }
-  },{
+  },
+  {
     "model": "mobility_5g_rest_api.DailyInflow",
     "pk": 9,
     "fields": {
@@ -84,7 +89,7 @@
       "maximum": 28
     }
   },
-    {
+  {
     "model": "mobility_5g_rest_api.DailyInflow",
     "pk": 10,
     "fields": {
@@ -92,7 +97,8 @@
       "location": "CN",
       "maximum": 63
     }
-  },{
+  },
+  {
     "model": "mobility_5g_rest_api.DailyInflow",
     "pk": 11,
     "fields": {
@@ -101,7 +107,7 @@
       "maximum": 19
     }
   },
-    {
+  {
     "model": "mobility_5g_rest_api.DailyInflow",
     "pk": 12,
     "fields": {
@@ -109,7 +115,8 @@
       "location": "CN",
       "maximum": 27
     }
-  },{
+  },
+  {
     "model": "mobility_5g_rest_api.DailyInflow",
     "pk": 13,
     "fields": {
@@ -118,7 +125,7 @@
       "maximum": 45
     }
   },
-    {
+  {
     "model": "mobility_5g_rest_api.DailyInflow",
     "pk": 14,
     "fields": {
@@ -126,7 +133,8 @@
       "location": "CN",
       "maximum": 22
     }
-  },{
+  },
+  {
     "model": "mobility_5g_rest_api.DailyInflow",
     "pk": 15,
     "fields": {
@@ -135,7 +143,7 @@
       "maximum": 21
     }
   },
-    {
+  {
     "model": "mobility_5g_rest_api.DailyInflow",
     "pk": 16,
     "fields": {
@@ -143,7 +151,8 @@
       "location": "CN",
       "maximum": 71
     }
-  },{
+  },
+  {
     "model": "mobility_5g_rest_api.DailyInflow",
     "pk": 17,
     "fields": {
@@ -152,7 +161,7 @@
       "maximum": 63
     }
   },
-    {
+  {
     "model": "mobility_5g_rest_api.DailyInflow",
     "pk": 18,
     "fields": {
@@ -160,7 +169,8 @@
       "location": "CN",
       "maximum": 55
     }
-  },{
+  },
+  {
     "model": "mobility_5g_rest_api.DailyInflow",
     "pk": 19,
     "fields": {
@@ -169,7 +179,7 @@
       "maximum": 34
     }
   },
-    {
+  {
     "model": "mobility_5g_rest_api.DailyInflow",
     "pk": 20,
     "fields": {

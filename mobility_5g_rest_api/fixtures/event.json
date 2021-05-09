@@ -182,7 +182,7 @@
       "longitude": 120
     }
   },
-    {
+  {
     "model": "mobility_5g_rest_api.Event",
     "pk": 15,
     "fields": {

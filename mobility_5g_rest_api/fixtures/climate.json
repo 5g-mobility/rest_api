@@ -10,7 +10,7 @@
       "temperature": 19.6
     }
   },
-    {
+  {
     "model": "mobility_5g_rest_api.Climate",
     "pk": 2,
     "fields": {
