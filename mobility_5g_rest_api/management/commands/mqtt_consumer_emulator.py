@@ -64,7 +64,7 @@ class Command(BaseCommand):
         client.loop_forever()
 
     def on_message(self, client, userdata, message):
-        #print("\nNew Message\n")
+        print("\nNew Message\n")
         json_msg = json.loads(str(message.payload.decode("utf-8")))
 
         vehicle_id = json_msg["vehicle_id"]
@@ -78,7 +78,7 @@ class Command(BaseCommand):
         rain_sensor = json_msg["rain_sensor"]
         fog_light_sensor = json_msg["fog_light_sensor"]
 
-        #print(vehicle_id, timestamp, latitude, longitude, co2_emissions, speed, air_temperature, light_sensor, rain_sensor, fog_light_sensor)
+        print(vehicle_id, timestamp, latitude, longitude, co2_emissions, speed, air_temperature, light_sensor, rain_sensor, fog_light_sensor)
 
         if self.barra_lat_lon_boundaries[0][1] <= latitude <= self.barra_lat_lon_boundaries[0][0]:
             location = "BA"
@@ -129,8 +129,8 @@ class Command(BaseCommand):
             if rain_sensor:
                 Event.objects.create(location=location,
                                      timestamp=timestamp,
-                                     event_type="RA",
-                                     event_class=light_event_class,
+                                     event_type="CO",
+                                     event_class="RA",
                                      latitude=latitude,
                                      longitude=longitude,
                                      velocity=speed)
@@ -140,8 +140,8 @@ class Command(BaseCommand):
             if fog_light_sensor:
                 Event.objects.create(location=location,
                                      timestamp=timestamp,
-                                     event_type="FO",
-                                     event_class=light_event_class,
+                                     event_type="CO",
+                                     event_class="FO",
                                      latitude=latitude,
                                      longitude=longitude,
                                      velocity=speed)
@@ -166,7 +166,7 @@ class Command(BaseCommand):
                 if light_sensor:
                     light_event_class = "LT"
                 else:
-                    light_event_class = "NT"
+                    light_event_class = "NL"
                 Event.objects.create(location=location,
                                      timestamp=timestamp,
                                      event_type="CO",
@@ -182,8 +182,8 @@ class Command(BaseCommand):
                 if rain_sensor:
                     Event.objects.create(location=location,
                                          timestamp=timestamp,
-                                         event_type="RA",
-                                         event_class=light_event_class,
+                                         event_type="CO",
+                                         event_class="RA",
                                          latitude=latitude,
                                          longitude=longitude,
                                          velocity=speed)
@@ -195,8 +195,8 @@ class Command(BaseCommand):
                 if fog_light_sensor:
                     Event.objects.create(location=location,
                                          timestamp=timestamp,
-                                         event_type="FO",
-                                         event_class=light_event_class,
+                                         event_type="CO",
+                                         event_class="FO",
                                          latitude=latitude,
                                          longitude=longitude,
                                          velocity=speed)
@@ -206,7 +206,7 @@ class Command(BaseCommand):
         if co2_emissions:
             self.last_vehicle_status[vehicle_id][4] += co2_emissions
 
-            if self.last_vehicle_status[vehicle_id][4] > 1000:
+            if self.last_vehicle_status[vehicle_id][4] > 500:
                 Event.objects.create(location=location,
                                      timestamp=timestamp,
                                      event_type="CO",
@@ -241,7 +241,8 @@ class Command(BaseCommand):
     def update_co2(self):
         while True:
             time.sleep(60 * 10)
-            for car in self.last_vehicle_status:
+            vehicles_status = self.last_vehicle_status
+            for car in vehicles_status:
                 actualTime = datetime.datetime.now()
                 if (datetime.datetime.now() - self.last_vehicle_status[car][5]).total_seconds() > 300:
                     if self.last_vehicle_status[car][4] > 0:
@@ -258,15 +259,16 @@ class Command(BaseCommand):
     def update_climate(self):
         while True:
             time.sleep(60 * 10)
-            for loc in self.climate_status:
-                if self.climate_status[loc][0].count(True) > 8:
+            climate_status = self.climate_status
+            for loc in climate_status:
+                if climate_status[loc][0].count(True) > 8:
                     condition = "RN"
-                elif self.climate_status[loc][2].count(True) > 8:
+                elif climate_status[loc][2].count(True) > 8:
                     condition = "FG"
                 else:
                     condition = "CL"
 
-                if self.climate_status[loc][1].count(True) >= 5:
+                if climate_status[loc][1].count(True) >= 5:
                     daytime = True
                 else:
                     daytime = False

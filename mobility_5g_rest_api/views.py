@@ -91,7 +91,7 @@ def carbon_footprint(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def daily_excessive_speed(request):
-    data = {}
+    data = []
     st = status.HTTP_200_OK
 
     for x in range(30):
@@ -107,6 +107,6 @@ def daily_excessive_speed(request):
         else:
             max_speed_this_day = 0
 
-        data[dategte.strftime("%d/%m/%y")] = {'number': number_this_day, 'top': max_speed_this_day}
+        data.append({'day': dategte.strftime("%d/%m/%y"), 'number': number_this_day, 'top': max_speed_this_day})
 
     return Response(data, status=st)
