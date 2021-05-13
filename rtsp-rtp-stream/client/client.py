@@ -15,7 +15,7 @@ class Client:
     DEFAULT_CHUNK_SIZE = 4096
     DEFAULT_RECV_DELAY = 20  # in milliseconds
 
-    DEFAULT_LOCAL_HOST = '127.0.0.1'
+    DEFAULT_LOCAL_HOST = '0.0.0.0'
 
     RTP_SOFT_TIMEOUT = 5  # in milliseconds
     # for allowing simulated non-blocking operations
@@ -77,6 +77,7 @@ class Client:
         recv = bytes()
         print('Waiting RTP packet...')
         while True:
+            print("Trying to receive")
             try:
                 recv += self._rtp_socket.recv(size)
                 if recv.endswith(VideoStream.JPEG_EOF):

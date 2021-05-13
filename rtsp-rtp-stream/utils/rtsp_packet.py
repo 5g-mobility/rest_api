@@ -128,8 +128,6 @@ class RTSPPacket:
             session_id = g.get('session_id')
             timeout = g.get('timeout')
 
-            print("SSEEE", session_id)
-
             try:
                 sequence_number = int(sequence_number)
             except (ValueError, TypeError):
@@ -283,7 +281,7 @@ class RTSPPacket:
             if self.rtp_dst_port is None:
                 raise InvalidRTSPRequest(f"missing RTP destination port: {self}")
             request_lines.append(
-                f"Transport: RTP/AVP/UDP;client_port={self.rtp_dst_port}"
+                f"Transport: RTP/AVP/UDP;unicast;client_port={self.rtp_dst_port}-{self.rtp_dst_port}"
             )
         elif self.request_type != self.DESCRIBE:
             request_lines.append(
