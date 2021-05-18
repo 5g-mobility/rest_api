@@ -2,6 +2,7 @@ import math
 import cv2
 import datetime
 from easyocr import Reader
+import re
 
 url = "rtsp://pei:5g-mobix@10.0.19.202:554"
 
@@ -27,7 +28,10 @@ while True:
         if frameId % math.floor(fps) == 0:
             image_time = frame[50:125, 1725:2250]
             cv2.imshow("Current frame", image_time)
-            print(Reader(['en']).readtext(image_time, detail=0))
+            time_from_image = Reader(['en']).readtext(image_time, detail=0)
+            res = re.findall("\d{2}", time_from_image[0])
+            date = datetime.datetime.strptime("{}{} {}".format(res[0], res[1], " ".join(res[2:])), "%Y %m %d %H %M %S")
+            print(date)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
