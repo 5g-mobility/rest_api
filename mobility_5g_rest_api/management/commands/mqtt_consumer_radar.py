@@ -4,6 +4,7 @@ import datetime
 import geopy.distance
 from django.core.management.base import BaseCommand, CommandError
 import json
+import xml.etree.cElementTree as ET
 import paho.mqtt.client as mqtt
 
 
@@ -45,13 +46,15 @@ class Command(BaseCommand):
         sec_time_since_2004 = int((datetime.datetime.utcnow() - datetime.datetime(2004, 1, 1)).total_seconds() * 1000)
         multiplier = math.floor(sec_time_since_2004 / 65536)
 
-        json_msg = json.loads(str(message.payload.decode("utf-8")))
+        xml = ET.fromstring(str(message.payload.decode("utf-8")))
 
-
-        station_id = json_msg["station_id"]
-        timestamp_delta = json_msg["timestamp_delta"]
-        longitude = json_msg["longitude"] / 10000000
-        latitude = json_msg["latitude"] / 10000000
+        station_id = xml.find('header').find('stationID').text
+        cpm = xml.find('cpm')
+        timestamp_delta = cpm.find('generationDeltaTime').text
+        cpm_parameters = cpm.find('cpmParameters')
+        reference_position = cpm_parameters.find('referencePosition')
+        longitude = reference_position.find('longitude') / 10000000
+        latitude = reference_position.find('latitude') / 10000000
         #print(station_id, timestamp_delta, longitude, latitude)
 
         sec_time_in_radar_since_2004 = (65536 * multiplier + timestamp_delta) / 1000
@@ -60,16 +63,14 @@ class Command(BaseCommand):
                                                               tz=datetime.timezone.utc)
         #print(time_in_radar_epoch)
 
-        perceived_objects = json_msg["perceived_objects"]
-
         object_ids_this_iteration = []
 
-        for obj in perceived_objects:
-            object_id = obj["objectID"]
-            x_distance = obj["xDistance"] / 100
-            y_distance = obj["yDistance"] / 100
-            x_speed = obj["xSpeed"] / 100
-            y_speed = obj["ySpeed"] / 100
+        for obj in cpm_parameters.findall('perceivedObjectContainer'):
+            object_id = obj.find('objectID').find('value').text
+            x_distance = obj.find('xDistance').find('value').text / 100
+            y_distance = obj.find('yDistance').find('value').text / 100
+            x_speed = obj.find('xSpeed').find('value').text / 100
+            y_speed = obj.find('ySpeed').find('value').text / 100
 
             if x_distance > 10 or y_distance > 45:
                 continue
