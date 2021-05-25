@@ -10,7 +10,7 @@ class Event(models.Model):
         ("RA", "Ria Ativa"),
         ("DN", "Duna"),
         ("PT", "Ponte Barra"),
-        ("25", "A25 Aveiro"),
+        ("25", "A25 Aveiro")
     ]
 
     EVENT_TYPE = [

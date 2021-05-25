@@ -110,3 +110,22 @@ def daily_excessive_speed(request):
         data[dategte.strftime("%d/%m/%y")] = {'number': number_this_day, 'top': max_speed_this_day}
 
     return Response(data, status=st)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def carbon_footprint(request):
+    data = {}
+    st = status.HTTP_200_OK
+
+    location = request.query_params.get('location', None)
+
+    if location == "RA":
+        data["CO2"] = sum(Event.objects.filter(location="BA", event_type="CO", event_class="CF").values_list('co2', flat=True))
+    elif location == "DN":
+        data["CO2"] = sum(Event.objects.filter(location="CN", event_type="CO", event_class="CF").values_list('co2', flat=True))
+    elif location == "PT":
+        data["CO2"] = sum(Event.objects.filter(location="CN", event_type="CO", event_class="CF").values_list('co2', flat=True))
+    else:
+        st = status.HTTP_404_NOT_FOUND
+
+    return Response(data, status=st)
