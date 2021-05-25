@@ -128,10 +128,6 @@ def circulation_vehicles(request):
     dategte = request.query_params.get('timestamp__gte', None)
     datelte = request.query_params.get('timestamp__lte', datetime.datetime.now())
 
-    data['cars'] = 0
-    data['trucks'] = 0
-    data['motorcycles'] = 0
-
     try:
         data['cars'] = Event.objects.filter(location=location, event_type="RT", event_class="CA",
                                             timestamp__gte=dategte,
@@ -197,7 +193,7 @@ def max_daily_inflow_summary(request):
 
     return Response(data, status=st)
 
-'''
+
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def bike_lanes_stats(request):
@@ -208,18 +204,14 @@ def bike_lanes_stats(request):
     dategte = request.query_params.get('timestamp__gte', None)
     datelte = request.query_params.get('timestamp__lte', datetime.datetime.now())
 
-    data['cars'] = 0
-    data['trucks'] = 0
-    data['motorcycles'] = 0
-
     try:
-        data['cars'] = Event.objects.filter(location=location, event_type="RT", event_class="CA",
+        data['people'] = Event.objects.filter(location=location, event_type="RT", event_class="PE",
                                             timestamp__gte=dategte,
                                             timestamp__lte=datelte).count()
-        data['trucks'] = Event.objects.filter(location=location, event_type="RT", event_class="TR",
+        data['animals'] = Event.objects.filter(location=location, event_type="RT", event_class="BC",
                                               timestamp__gte=dategte,
                                               timestamp__lte=datelte).count()
-        data['motorcycles'] = Event.objects.filter(location=location, event_type="RT", event_class="MC",
+        data['bikes'] = Event.objects.filter(location=location, event_type="RT", event_class="AN",
                                                    timestamp__gte=dategte,
                                                    timestamp__lte=datelte).count()
     except:
@@ -227,4 +219,3 @@ def bike_lanes_stats(request):
         st = status.HTTP_400_BAD_REQUEST
 
     return Response(data, status=st)
-'''
