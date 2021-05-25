@@ -14,5 +14,8 @@ urlpatterns = [
     path('', include(router.urls)),
     path('conditions_stats/', views.conditions_stats),
     path('carbon_footprint/', views.carbon_footprint),
-    path('daily_excessive_speed/', views.daily_excessive_speed)
+    path('daily_excessive_speed/', views.daily_excessive_speed),
+    path('circulation_vehicles/', views.circulation_vehicles),
+    path('top_speed_road_traffic_summary/', views.top_speed_road_traffic_summary),
+    path('max_daily_inflow_summary/', views.max_daily_inflow_summary)
 ]
