@@ -151,27 +151,23 @@ def top_speed_road_traffic_summary(request):
     data = {}
     st = status.HTTP_200_OK
 
-    location = request.query_params.get('location', None)
+    for location in ["RA", "DN", "PT"]:
+        data[location] = {}
+        for x in range(30):
+            today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+            dategte = today - datetime.timedelta(days=x)
+            datelt = dategte + datetime.timedelta(days=1)
 
-    if location not in ["RA", "DN", "PT"]:
-        data['error'] = "Location must be RA, DN or PT"
-        return Response(data, status=status.HTTP_400_BAD_REQUEST)
+            day_events = Event.objects.filter(location=location, timestamp__lt=datelt, timestamp__gte=dategte,
+                                              event_type="RT")
 
-    for x in range(30):
-        today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        dategte = today - datetime.timedelta(days=x)
-        datelt = dategte + datetime.timedelta(days=1)
+            number_this_day = day_events.count()
+            if number_this_day > 0:
+                max_speed_this_day = max(day_events.values_list('velocity', flat=True))
+            else:
+                max_speed_this_day = 0
 
-        day_events = Event.objects.filter(location=location, timestamp__lt=datelt, timestamp__gte=dategte,
-                                          event_type="RT")
-
-        number_this_day = day_events.count()
-        if number_this_day > 0:
-            max_speed_this_day = max(day_events.values_list('velocity', flat=True))
-        else:
-            max_speed_this_day = 0
-
-        data[dategte.strftime("%d/%m/%y")] = max_speed_this_day
+            data[location][dategte.strftime("%d/%m/%y")] = max_speed_this_day
 
     return Response(data, status=st)
 
