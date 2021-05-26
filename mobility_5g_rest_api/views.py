@@ -144,6 +144,7 @@ def circulation_vehicles(request):
 
     return Response(data, status=st)
 
+
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def top_speed_road_traffic_summary(request):
@@ -161,7 +162,8 @@ def top_speed_road_traffic_summary(request):
         dategte = today - datetime.timedelta(days=x)
         datelt = dategte + datetime.timedelta(days=1)
 
-        day_events = Event.objects.filter(location=location, timestamp__lt=datelt, timestamp__gte=dategte, event_type="RT")
+        day_events = Event.objects.filter(location=location, timestamp__lt=datelt, timestamp__gte=dategte,
+                                          event_type="RT")
 
         number_this_day = day_events.count()
         if number_this_day > 0:
@@ -172,6 +174,7 @@ def top_speed_road_traffic_summary(request):
         data[dategte.strftime("%d/%m/%y")] = max_speed_this_day
 
     return Response(data, status=st)
+
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -206,14 +209,14 @@ def bike_lanes_stats(request):
 
     try:
         data['people'] = Event.objects.filter(location=location, event_type="RT", event_class="PE",
-                                            timestamp__gte=dategte,
-                                            timestamp__lte=datelte).count()
-        data['animals'] = Event.objects.filter(location=location, event_type="RT", event_class="BC",
                                               timestamp__gte=dategte,
                                               timestamp__lte=datelte).count()
+        data['animals'] = Event.objects.filter(location=location, event_type="RT", event_class="BC",
+                                               timestamp__gte=dategte,
+                                               timestamp__lte=datelte).count()
         data['bikes'] = Event.objects.filter(location=location, event_type="RT", event_class="AN",
-                                                   timestamp__gte=dategte,
-                                                   timestamp__lte=datelte).count()
+                                             timestamp__gte=dategte,
+                                             timestamp__lte=datelte).count()
     except:
         data['error'] = "Location must be RA, DN or PT and timestamp__gte is needed"
         st = status.HTTP_400_BAD_REQUEST
