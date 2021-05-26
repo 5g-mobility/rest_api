@@ -64,7 +64,7 @@ class Command(BaseCommand):
         client.loop_forever()
 
     def on_message(self, client, userdata, message):
-        print("\nNew Message\n")
+        #print("\nNew Message\n")
         json_msg = json.loads(str(message.payload.decode("utf-8")))
 
         vehicle_id = json_msg["vehicle_id"]
@@ -78,7 +78,7 @@ class Command(BaseCommand):
         rain_sensor = json_msg["rain_sensor"]
         fog_light_sensor = json_msg["fog_light_sensor"]
 
-        print(vehicle_id, timestamp, latitude, longitude, co2_emissions, speed, air_temperature, light_sensor, rain_sensor, fog_light_sensor)
+        #print(vehicle_id, timestamp, latitude, longitude, co2_emissions, speed, air_temperature, light_sensor, rain_sensor, fog_light_sensor)
 
         if self.barra_lat_lon_boundaries[0][1] <= latitude <= self.barra_lat_lon_boundaries[0][0]:
             location = "BA"
@@ -206,7 +206,7 @@ class Command(BaseCommand):
         if co2_emissions:
             self.last_vehicle_status[vehicle_id][4] += co2_emissions
 
-            if self.last_vehicle_status[vehicle_id][4] > 100:
+            if self.last_vehicle_status[vehicle_id][4] > 1000:
                 Event.objects.create(location=location,
                                      timestamp=timestamp,
                                      event_type="CO",
@@ -214,7 +214,7 @@ class Command(BaseCommand):
                                      latitude=latitude,
                                      longitude=longitude,
                                      velocity=speed,
-                                     co2=round(self.last_vehicle_status[vehicle_id][4],2))
+                                     co2=round(self.last_vehicle_status[vehicle_id][4], 2))
 
         if speed > 90:
             Event.objects.create(location=location,
@@ -252,7 +252,7 @@ class Command(BaseCommand):
                                              latitude=self.last_vehicle_status[car][7],
                                              longitude=self.last_vehicle_status[car][8],
                                              velocity=self.last_vehicle_status[car][9],
-                                             co2=round(self.last_vehicle_status[car][4],2))
+                                             co2=round(self.last_vehicle_status[car][4], 2))
                     del self.last_vehicle_status[car]
 
     def update_climate(self):

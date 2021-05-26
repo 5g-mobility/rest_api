@@ -2,8 +2,6 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from datetime import datetime
 from datetime import date
-
-
 from faker import Faker
 
 from mobility_5g_rest_api.models import Event, Climate, DailyInflow, RadarEvent

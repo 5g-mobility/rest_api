@@ -1,4 +1,10 @@
-from rest_framework import viewsets
+import datetime
+
+from django.db.models import Sum
+from rest_framework import viewsets, status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
 from mobility_5g_rest_api.models import Event, Climate, DailyInflow
 from mobility_5g_rest_api.serializers import EventSerializer, ClimateSerializer, DailyInflowSerializer
@@ -11,11 +17,11 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         'timestamp': ['exact', 'lte', 'gte'],
         'location': ['exact'],
         'event_type': ['exact'],
-        'event_class': ['exact'],
+        'event_class': ['exact', 'in'],
         'velocity': ['exact', 'lte', 'gte'],
         'latitude': ['exact', 'lte', 'gte'],
         'longitude': ['exact', 'lte', 'gte'],
-        'co2km': ['exact', 'lte', 'gte'],
+        'co2': ['exact', 'lte', 'gte'],
         'temperature': ['exact', 'lte', 'gte'],
     }
 
@@ -41,3 +47,66 @@ class DailyInflowViewSet(viewsets.ReadOnlyModelViewSet):
         'current': ['exact', 'lte', 'gte'],
         'date': ['exact', 'lte', 'gte'],
     }
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def conditions_stats(request):
+    data = {}
+    st = status.HTTP_200_OK
+
+    location = request.query_params.get('location', None)
+
+    if location == "BA":
+        data["FG"] = Climate.objects.filter(location="BA", condition="FG").count()
+        data["CL"] = Climate.objects.filter(location="BA", condition="CL").count()
+        data["RN"] = Climate.objects.filter(location="BA", condition="RN").count()
+    elif location == "CN":
+        data["FG"] = Climate.objects.filter(location="CN", condition="FG").count()
+        data["CL"] = Climate.objects.filter(location="CN", condition="CL").count()
+        data["RN"] = Climate.objects.filter(location="CN", condition="RN").count()
+    else:
+        st = status.HTTP_404_NOT_FOUND
+
+    return Response(data, status=st)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def carbon_footprint(request):
+    data = {}
+    st = status.HTTP_200_OK
+
+    location = request.query_params.get('location', None)
+
+    if location == "BA":
+        data["CO2"] = sum(Event.objects.filter(location="BA", event_type="CO", event_class="CF").values_list('co2', flat=True))
+    elif location == "CN":
+        data["CO2"] = sum(Event.objects.filter(location="CN", event_type="CO", event_class="CF").values_list('co2', flat=True))
+    else:
+        st = status.HTTP_404_NOT_FOUND
+
+    return Response(data, status=st)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def daily_excessive_speed(request):
+    data = {}
+    st = status.HTTP_200_OK
+
+    for x in range(30):
+        today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        dategte = today - datetime.timedelta(days=x)
+        datelt = dategte + datetime.timedelta(days=1)
+
+        day_events = Event.objects.filter(timestamp__lt=datelt, timestamp__gte=dategte, event_type="CO", event_class="CS")
+
+        number_this_day = day_events.count()
+        if number_this_day > 0:
+            max_speed_this_day = max(day_events.values_list('velocity', flat=True))
+        else:
+            max_speed_this_day = 0
+
+        data[dategte.strftime("%d/%m/%y")] = {'number': number_this_day, 'top': max_speed_this_day}
+
+    return Response(data, status=st)
