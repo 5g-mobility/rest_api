@@ -99,7 +99,7 @@ class Command(BaseCommand):
 
             speed = math.ceil(x_speed + y_speed * 3.6)
 
-            angle_of_object = math.atan(x_distance / y_distance)
+            angle_of_object = math.atan(x_distance / y_distance) + 180
             vector_distance_object = math.sqrt(x_distance ** 2 + y_distance ** 2) / 1000
             # vector = y_distance/math.cos(angle_of_object)
             object_position = geopy.distance.distance(kilometers=vector_distance_object) \
