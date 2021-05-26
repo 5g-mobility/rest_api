@@ -37,6 +37,10 @@ db-up: ## Pull and start the Docker MongoDB container in the background
 volume-down: ## Remove volume of MongoDB Container
 	docker volume rm mongodb-data
 
+.PHONY: volume-up
+volume-up: ## Create volume of MongoDB Container
+	docker volume create mongodb-data
+
 .PHONY: fixtures
 fixtures: ## Load fixtures
 	$(PYTHON) manage.py loaddata event.json climate.json dailyinflow.json
