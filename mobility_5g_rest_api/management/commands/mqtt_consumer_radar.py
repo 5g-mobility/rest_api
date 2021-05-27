@@ -56,10 +56,9 @@ class Command(BaseCommand):
         @app.callback(Output('map', 'figure'),
                       Input('interval-component', 'n_intervals'))
         def update_map(n):
-            print(self.map_objects)
-            lats = [lat for lat, lon, car_id in self.map_objects]
-            lons = [lon for lat, lon, car_id in self.map_objects]
-            ids = [car_id for lat, lon, car_id in self.map_objects]
+            lats = [lat for lat, lon, car_id, speed in self.map_objects]
+            lons = [lon for lat, lon, car_id, speed in self.map_objects]
+            text_ids_speed = ["ID: {} Speed: {}".format(car_id, speed) for lat, lon, car_id, speed in self.map_objects]
             fig = go.Figure(go.Scattermapbox(
                 lat=lats,
                 lon=lons,
@@ -67,7 +66,7 @@ class Command(BaseCommand):
                 marker=go.scattermapbox.Marker(
                     size=9
                 ),
-                text=ids,
+                text=text_ids_speed,
                 textposition="bottom right"
             ))
 
@@ -77,13 +76,14 @@ class Command(BaseCommand):
                 hovermode='closest',
                 mapbox=dict(
                     accesstoken=mapbox_access_token,
+                    style="satellite",
                     bearing=0,
                     center=dict(
-                        lat=40.625535,
-                        lon=-8.729230
+                        lat=40.607120,
+                        lon=-8.748817
                     ),
                     pitch=0,
-                    zoom=13
+                    zoom=17
                 ),
             )
             return fig
@@ -158,8 +158,6 @@ class Command(BaseCommand):
 
             perceived_objects_ids.append(object_id)
 
-            map_objects.append((object_position[0], object_position[1], object_id))
-
             if object_id in self.perceived_objects_on_zone:
                 pass  # -> Continue
 
@@ -173,6 +171,8 @@ class Command(BaseCommand):
             object_position = geopy.distance.distance(kilometers=vector_distance_object) \
                 .destination((latitude, longitude), bearing=angle_of_object)
             object_position = (object_position.latitude, object_position.longitude)
+
+            map_objects.append((object_position[0], object_position[1], object_id, speed))
 
             if self.checkpoint[0][0] <= object_position[0] <= self.checkpoint[1][0] and self.checkpoint[0][1] <= \
                     object_position[1] <= self.checkpoint[1][1]:
