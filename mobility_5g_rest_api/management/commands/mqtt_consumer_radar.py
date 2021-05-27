@@ -1,10 +1,18 @@
 import math
 import datetime
+import time
 
 import geopy.distance
+from dash.dependencies import Output, Input
 from django.core.management.base import BaseCommand
 import xml.etree.cElementTree as ET
 import paho.mqtt.client as mqtt
+import plotly.graph_objects as go
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+import threading
+import random
 
 from mobility_5g_rest_api.models import RadarEvent
 
@@ -19,6 +27,8 @@ class Command(BaseCommand):
         self.sec_epoch_2004 = int((datetime.datetime(2004, 1, 1) - datetime.datetime(1970, 1, 1)).total_seconds())
         self.old_iteration = []
         self.to_delete = []
+        self.map_objects = []
+        self.map_time = datetime.datetime.now()
 
     def add_arguments(self, parser):
         parser.add_argument('--broker_url', nargs=1, type=str, required=True)
@@ -27,9 +37,64 @@ class Command(BaseCommand):
         parser.add_argument('--broker_pw', nargs=1, type=str, required=False)
         parser.add_argument('--client_id', nargs=1, type=str, required=True)
         parser.add_argument('--topic', nargs=1, type=str, required=True)
+        parser.add_argument("--map", help="Show Map Helper", action='store_true')
+
+    def generate_map(self):
+        # Objects -> [(lat, lon, car_id)]
+        mapbox_access_token = open(".mapbox_token").read()
+
+        app = dash.Dash()
+        app.layout = html.Div([
+            dcc.Graph(id='map', style={'width': '100vw', 'height': '100vh'}),
+            dcc.Interval(
+                id='interval-component',
+                interval=300,
+                n_intervals=0
+            )
+        ])
+
+        @app.callback(Output('map', 'figure'),
+                      Input('interval-component', 'n_intervals'))
+        def update_map(n):
+            print(self.map_objects)
+            lats = [lat for lat, lon, car_id in self.map_objects]
+            lons = [lon for lat, lon, car_id in self.map_objects]
+            ids = [car_id for lat, lon, car_id in self.map_objects]
+            fig = go.Figure(go.Scattermapbox(
+                lat=lats,
+                lon=lons,
+                mode='markers+text',
+                marker=go.scattermapbox.Marker(
+                    size=9
+                ),
+                text=ids,
+                textposition="bottom right"
+            ))
+
+            fig.update_layout(
+                title=str(self.map_time),
+                autosize=True,
+                hovermode='closest',
+                mapbox=dict(
+                    accesstoken=mapbox_access_token,
+                    bearing=0,
+                    center=dict(
+                        lat=40.625535,
+                        lon=-8.729230
+                    ),
+                    pitch=0,
+                    zoom=13
+                ),
+            )
+            return fig
+
+        app.run_server(debug=True, use_reloader=False)
 
     def handle(self, *args, **options):
         print("Starting MQTT Consumer")
+
+        if options.get('map'):
+            threading.Thread(target=self.generate_map, args=(), daemon=True).start()
 
         client = mqtt.Client(options.get("client_id")[0])
         if options.get("broker_user") and options.get("broker_pw"):
@@ -81,6 +146,7 @@ class Command(BaseCommand):
         time_in_radar_until_seconds = time_in_radar_epoch.replace(microsecond=0)
 
         perceived_objects_ids = []
+        map_objects = []
 
         for obj in cpm_parameters.find('perceivedObjectContainer').findall('PerceivedObject'):
 
@@ -92,8 +158,10 @@ class Command(BaseCommand):
 
             perceived_objects_ids.append(object_id)
 
+            map_objects.append((object_position[0], object_position[1], object_id))
+
             if object_id in self.perceived_objects_on_zone:
-                pass
+                pass  # -> Continue
 
             print("\n", object_id, x_distance, y_distance, x_speed, y_speed)
 
@@ -121,7 +189,11 @@ class Command(BaseCommand):
                                       radar_id=station_id
                                       )'''
 
-        old_objects_not_in_this_iteration = [obj_id for obj_id in self.old_iteration if obj_id not in perceived_objects_ids]
+        self.map_objects = map_objects
+        self.map_time = time_in_radar_epoch
+
+        old_objects_not_in_this_iteration = [obj_id for obj_id in self.old_iteration if
+                                             obj_id not in perceived_objects_ids]
         for obj_id in self.to_delete:
             if obj_id not in old_objects_not_in_this_iteration:
                 if obj_id in self.perceived_objects_on_zone:
@@ -133,7 +205,6 @@ class Command(BaseCommand):
                 self.to_delete.append(obj_id)
 
         self.old_iteration = perceived_objects_ids
-
 
     def on_connect(self, client, userdata, flags, rc):
         self.stdout.write(self.style.SUCCESS("Connected With Result Code: {}".format(rc)))
