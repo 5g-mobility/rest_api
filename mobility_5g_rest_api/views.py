@@ -1,10 +1,11 @@
 import datetime
 
-from django.db.models import Sum, Avg
+from django.db.models import Avg, Max, Sum
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+import random
 
 from mobility_5g_rest_api.models import Event, Climate, DailyInflow
 from mobility_5g_rest_api.serializers import EventSerializer, ClimateSerializer, DailyInflowSerializer
@@ -81,11 +82,17 @@ def carbon_footprint(request):
     location = request.query_params.get('location', None)
 
     if location == "BA":
-        data["CO2"] = sum(
-            Event.objects.filter(location="BA", event_type="CO", event_class="CF").values_list('co2', flat=True))
+        query_set = Event.objects.filter(location="BA", event_type="CO", event_class="CF")
+        if query_set.count() > 0:
+            data["CO2"] = query_set.aggregate(Sum('co2'))['co2__sum']
+        else:
+            data["CO2"] = 0
     elif location == "CN":
-        data["CO2"] = sum(
-            Event.objects.filter(location="CN", event_type="CO", event_class="CF").values_list('co2', flat=True))
+        query_set = Event.objects.filter(location="CN", event_type="CO", event_class="CF")
+        if query_set.count() > 0:
+            data["CO2"] = query_set.aggregate(Sum('co2'))['co2__sum']
+        else:
+            data["CO2"] = 0
     else:
         st = status.HTTP_400_BAD_REQUEST
         data['error'] = "Location must be BA, or CN"
@@ -109,7 +116,7 @@ def daily_excessive_speed(request):
 
         number_this_day = day_events.count()
         if number_this_day > 0:
-            max_speed_this_day = max(day_events.values_list('velocity', flat=True))
+            max_speed_this_day = day_events.aggregate(Max('velocity'))['velocity__max']
         else:
             max_speed_this_day = 0
 
@@ -163,7 +170,7 @@ def top_speed_road_traffic_summary(request):
 
             number_this_day = day_events.count()
             if number_this_day > 0:
-                max_speed_this_day = max(day_events.values_list('velocity', flat=True))
+                max_speed_this_day = day_events.aggregate(Max('velocity'))['velocity__max']
             else:
                 max_speed_this_day = 0
 
@@ -248,5 +255,33 @@ def current_traffic_stats(request):
         n_people = Event.objects.filter(location=location, timestamp__lte=now, timestamp__gte=thirty_sec_ago,
                                         event_class="PE").count()
         data[location]['people'] = n_people
+
+    return Response(data, status=st)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def random_events_overview(request):
+    data = {}
+    st = status.HTTP_200_OK
+
+    now = datetime.datetime.now()
+    one_day_ago = now - datetime.timedelta(days=1)
+
+    option = random.randint(0, 2)
+
+    if option == 0:
+        data['text'] = 'Cars Speeding'
+        data['value'] = Event.objects.filter(timestamp__lte=now, timestamp__gte=one_day_ago, event_type="RT",
+                                             velocity__gt=90).count()
+    elif option == 1:
+        data['text'] = 'Max Speed'
+        max_speed = Event.objects.filter(timestamp__lte=now, timestamp__gte=one_day_ago, event_type="RT") \
+            .aggregate(Max('velocity'))['velocity__max']
+        data['value'] = "{} km/h".format(max_speed) if max_speed else "0 km/h"
+    elif option == 2:
+        data['text'] = 'Road Danger Events'
+        data['value'] = Event.objects.filter(timestamp__lte=now, timestamp__gte=one_day_ago, event_type="RD",
+                                             velocity__gt=90).count()
 
     return Response(data, status=st)
