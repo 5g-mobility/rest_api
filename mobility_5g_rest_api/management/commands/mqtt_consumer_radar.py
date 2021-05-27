@@ -1,9 +1,8 @@
 import math
 import datetime
-import time
 
 import geopy.distance
-from dash.dependencies import Output, Input
+from dash.dependencies import Output, Input, State
 from django.core.management.base import BaseCommand
 import xml.etree.cElementTree as ET
 import paho.mqtt.client as mqtt
@@ -12,7 +11,6 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import threading
-import random
 
 from mobility_5g_rest_api.models import RadarEvent
 
@@ -43,49 +41,57 @@ class Command(BaseCommand):
         # Objects -> [(lat, lon, car_id)]
         mapbox_access_token = open(".mapbox_token").read()
 
+        fig = go.Figure(go.Scattermapbox(
+            lat=[lat for lat, lon, car_id, speed in self.map_objects],
+            lon=[lon for lat, lon, car_id, speed in self.map_objects],
+            mode='markers+text',
+            marker=go.scattermapbox.Marker(
+                size=9
+            ),
+            text=["ID: {} Speed: {}".format(car_id, speed) for lat, lon, car_id, speed in self.map_objects],
+            textposition="bottom right",
+            textfont=dict(color='white', size=18)
+        ))
+
+        fig.update_layout(
+            title=str(self.map_time),
+            autosize=True,
+            hovermode='closest',
+            mapbox=dict(
+                accesstoken=mapbox_access_token,
+                style="satellite",
+                bearing=0,
+                center=dict(
+                    lat=40.607120,
+                    lon=-8.748817
+                ),
+                pitch=0,
+                zoom=17
+            ),
+        )
+
         app = dash.Dash()
         app.layout = html.Div([
-            dcc.Graph(id='map', style={'width': '100vw', 'height': '100vh'}),
+            dcc.Graph(id='map', style={'width': '100vw', 'height': '100vh'}, figure=fig),
             dcc.Interval(
                 id='interval-component',
-                interval=300,
+                interval=100,
                 n_intervals=0
             )
         ])
 
         @app.callback(Output('map', 'figure'),
-                      Input('interval-component', 'n_intervals'))
-        def update_map(n):
+                      Input('interval-component', 'n_intervals'),
+                      dash.dependencies.State('map', 'figure'))
+        def update_map(n, fig):
             lats = [lat for lat, lon, car_id, speed in self.map_objects]
             lons = [lon for lat, lon, car_id, speed in self.map_objects]
             text_ids_speed = ["ID: {} Speed: {}".format(car_id, speed) for lat, lon, car_id, speed in self.map_objects]
-            fig = go.Figure(go.Scattermapbox(
-                lat=lats,
-                lon=lons,
-                mode='markers+text',
-                marker=go.scattermapbox.Marker(
-                    size=9
-                ),
-                text=text_ids_speed,
-                textposition="bottom right"
-            ))
+            fig['data'][0]['lat'] = lats
+            fig['data'][0]['lon'] = lons
+            fig['data'][0]['text'] = text_ids_speed
+            fig['layout']['title']['text'] = str(self.map_time)
 
-            fig.update_layout(
-                title=str(self.map_time),
-                autosize=True,
-                hovermode='closest',
-                mapbox=dict(
-                    accesstoken=mapbox_access_token,
-                    style="satellite",
-                    bearing=0,
-                    center=dict(
-                        lat=40.607120,
-                        lon=-8.748817
-                    ),
-                    pitch=0,
-                    zoom=17
-                ),
-            )
             return fig
 
         app.run_server(debug=True, use_reloader=False)
