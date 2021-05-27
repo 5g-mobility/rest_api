@@ -18,5 +18,6 @@ urlpatterns = [
     path('circulation_vehicles/', views.circulation_vehicles),
     path('top_speed_road_traffic_summary/', views.top_speed_road_traffic_summary),
     path('max_daily_inflow_summary/', views.max_daily_inflow_summary),
-    path('bike_lanes_stats/', views.bike_lanes_stats)
+    path('bike_lanes_stats/', views.bike_lanes_stats),
+    path('current_traffic_stats/', views.current_traffic_stats)
 ]

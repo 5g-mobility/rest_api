@@ -1,6 +1,6 @@
 import datetime
 
-from django.db.models import Sum
+from django.db.models import Sum, Avg
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -216,5 +216,37 @@ def bike_lanes_stats(request):
     except:
         data['error'] = "Location must be RA, DN or PT and timestamp__gte is needed"
         st = status.HTTP_400_BAD_REQUEST
+
+    return Response(data, status=st)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def current_traffic_stats(request):
+    data = {}
+    st = status.HTTP_200_OK
+
+    now = datetime.datetime.now()
+    thirty_sec_ago = now - datetime.timedelta(seconds=30)
+
+    for location in ["RA", "DN", "PT"]:
+        data[location] = {}
+        objects = Event.objects.filter(location=location, timestamp__lte=now, timestamp__gte=thirty_sec_ago,
+                                       event_type="RT")
+        n_objects = objects.count()
+        if n_objects > 0:
+            avg_speed = objects.aggregate(Avg('velocity'))
+            if avg_speed <= 30:
+                data[location]['traffic'] = 'Slow'
+            elif avg_speed > 90:
+                data[location]['traffic'] = 'Excessive Speed'
+            else:
+                data[location]['traffic'] = 'Flowing Normally'
+        else:
+            data[location]['traffic'] = 'Flowing Normally'
+
+        n_people = Event.objects.filter(location=location, timestamp__lte=now, timestamp__gte=thirty_sec_ago,
+                                        event_class="PE").count()
+        data[location]['people'] = n_people
 
     return Response(data, status=st)
