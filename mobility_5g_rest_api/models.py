@@ -207,15 +207,9 @@ class DailyInflow(models.Model):
 
 
 class RadarEvent(models.Model):
-    CLASSES = [
-        ("CA", "Car"),
-        ("MB", "Motorbike"),
-        ("TR", "Truck")
-    ]
-
     RADAR = [
         ("DN", "Duna"),
-        ("RA", "Ria Ativa"),
+        ("7", "Ria Ativa"),
         ("PT", "Ponte Barra")
     ]
 
@@ -234,5 +228,3 @@ class RadarEvent(models.Model):
     )
 
     radar_id = models.CharField(max_length=2, choices=RADAR)
-    object_class = models.CharField(max_length=2, choices=CLASSES)
-

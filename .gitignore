@@ -11,6 +11,8 @@ local_settings.py
 db.sqlite3
 media
 
+.mapbox_token
+
 # Flower DB
 flower/flower
 
