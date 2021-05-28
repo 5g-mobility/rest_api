@@ -16,7 +16,7 @@ from mobility_5g_rest_api.models import RadarEvent
 
 
 class Command(BaseCommand):
-    help = 'Runs the MQTT Consumer'
+    help = 'Runs the MQTT Radar Consumer'
 
     def __init__(self, stdout=None, stderr=None, no_color=False, force_color=False):
         super().__init__(stdout, stderr, no_color, force_color)

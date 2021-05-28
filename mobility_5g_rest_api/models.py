@@ -173,7 +173,8 @@ class Climate(models.Model):
 class DailyInflow(models.Model):
     LOCATION = [
         ("CN", "Costa Nova"),
-        ("BA", "Barra")
+        ("BA", "Barra"),
+        ("BT", "Both Costa Nova and Barra")
     ]
 
     location = models.CharField(max_length=2, choices=LOCATION)
@@ -228,3 +229,6 @@ class RadarEvent(models.Model):
     )
 
     radar_id = models.CharField(max_length=2, choices=RADAR)
+
+    class Meta:
+        ordering = ["-timestamp"]
