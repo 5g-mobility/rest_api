@@ -9,7 +9,7 @@ services:
             - MONGO_INITDB_ROOT_PASSWORD=admin
         volumes:
             - ./mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-            - mongodb-data:/data/db
+            - mongodb-data/data/db:/data/db
         networks:
             - mongodb_network
         ports:
@@ -31,7 +31,7 @@ services:
             - ME_CONFIG_BASICAUTH_USERNAME=admin
             - ME_CONFIG_BASICAUTH_PASSWORD=admin
         volumes:
-            - mongodb-data:/data/db
+            - mongodb-data/data/db:/data/db
         depends_on:
             - mongodb
         networks:
