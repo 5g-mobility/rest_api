@@ -142,7 +142,7 @@ class Command(BaseCommand):
         reference_position = management_container.find('referencePosition')
         longitude = int(reference_position.find('longitude').text) / 10000000
         latitude = int(reference_position.find('latitude').text) / 10000000
-        # print(station_id, timestamp_delta, longitude, latitude)
+        #print(station_id, timestamp_delta, longitude, latitude)
 
         sec_time_in_radar_since_2004 = (65536 * multiplier + timestamp_delta) / 1000
 
@@ -151,7 +151,6 @@ class Command(BaseCommand):
 
         if time_in_radar_epoch < self.last_time:
             return
-        # print(time_in_radar_epoch)
 
         time_in_radar_until_seconds = time_in_radar_epoch.replace(microsecond=0)
 
@@ -171,7 +170,7 @@ class Command(BaseCommand):
             if object_id in self.perceived_objects_on_zone:
                 continue
 
-            # print("\n", object_id, x_distance, y_distance, x_speed, y_speed)
+            #print("\n", object_id, x_distance, y_distance, x_speed, y_speed)
 
             speed = math.ceil(x_speed + y_speed * 3.6)
 
@@ -187,9 +186,9 @@ class Command(BaseCommand):
                     object_position[1] <= self.checkpoint[1][1]:
                 self.perceived_objects_on_zone.append(object_id)
 
-                print(time_in_radar_epoch)
-                print(time_in_radar_until_seconds)
-                print(speed, str(object_position[0]) + "," + str(object_position[1]))
+                #print(time_in_radar_epoch)
+                print("\n", time_in_radar_until_seconds)
+                print(speed, str(object_position[0]) + "," + str(object_position[1]), "\n")
 
                 # Save object
                 RadarEvent.objects.create(timestamp=time_in_radar_until_seconds,
