@@ -18,6 +18,7 @@ class Command(BaseCommand):
         self.last_vehicle_status = {}
         self.barra_lat_lon_boundaries = (40.64436, 40.63111), (-8.75093, -8.73451)
         self.costa_lat_lon_boundaries = (40.63119, 40.60714), (-8.75845, -8.74338)
+
         # 1º List: Rain Sensor of last 10 cars
         # 2º List: Light Sensor of last 10 cars
         # 3º List: Fog Sensor of last 10 cars
