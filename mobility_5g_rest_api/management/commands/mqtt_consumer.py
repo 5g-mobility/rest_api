@@ -4,7 +4,7 @@ import paho.mqtt.client as mqtt
 
 
 class Command(BaseCommand):
-    help = 'Runs the MQTT Consumer'
+    help = 'Example of a MQTT Consumer'
 
     def add_arguments(self, parser):
         parser.add_argument('--broker_url', nargs='?', type=str)
@@ -30,10 +30,10 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS("message qos={}".format(message.qos)))
         self.stdout.write(self.style.SUCCESS("message retain flag=".format(message.retain)))
 
-        ev = Event.objects.create(location="DN",
-                                  event_type="RT",
-                                  event_class="CA",
-                                  velocity=250)
+        Event.objects.create(location="DN",
+                             event_type="RT",
+                             event_class="CA",
+                             velocity=250)
 
     def on_connect(self, client, userdata, flags, rc):
         self.stdout.write(self.style.SUCCESS("Connected With Result Code: {}".format(rc)))

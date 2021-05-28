@@ -198,5 +198,15 @@
       "maximum": 31,
       "current": 3
     }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 22,
+    "fields": {
+      "date": "2021-04-25",
+      "location": "BT",
+      "maximum": 31,
+      "current": 3
+    }
   }
 ]
