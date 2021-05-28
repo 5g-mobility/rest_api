@@ -158,7 +158,7 @@ def top_speed_road_traffic_summary(request):
     data = {}
     st = status.HTTP_200_OK
 
-    for location in ["RA", "DN", "PT"]:
+    for location in ["RA", "PT"]:  # Add DN to include Duna data later on
         data[location] = {}
         for x in range(30):
             today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -185,7 +185,7 @@ def max_daily_inflow_summary(request):
     data = {}
     st = status.HTTP_200_OK
 
-    for location in ['CN', 'BA']:
+    for location in ['BT']:  # Add CN and BA to include both zones later on
         data[location] = {}
         for x in range(30):
             today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -236,7 +236,7 @@ def current_traffic_stats(request):
     now = datetime.datetime.now()
     thirty_sec_ago = now - datetime.timedelta(seconds=30)
 
-    for location in ["RA", "DN", "PT"]:
+    for location in ["RA", "PT"]:  # Add DN to include Duna data later on
         data[location] = {}
         objects = Event.objects.filter(location=location, timestamp__lte=now, timestamp__gte=thirty_sec_ago,
                                        event_type="RT")
