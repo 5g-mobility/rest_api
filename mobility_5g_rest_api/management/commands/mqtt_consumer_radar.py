@@ -28,6 +28,9 @@ class Command(BaseCommand):
         self.to_delete = []
         self.map_objects = []
         self.map_time = datetime.datetime.now()
+        self.radar_id = None
+        self.angle_offset = 0
+        self.map_lat_lon = (0,0)
 
     def add_arguments(self, parser):
         parser.add_argument('--broker_url', nargs=1, type=str, required=True)
@@ -63,8 +66,8 @@ class Command(BaseCommand):
                 style="satellite",
                 bearing=0,
                 center=dict(
-                    lat=40.607120,
-                    lon=-8.748817
+                    lat=self.map_lat_lon[0],
+                    lon=self.map_lat_lon[1]
                 ),
                 pitch=0,
                 zoom=17
@@ -100,6 +103,20 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         print("Starting MQTT Consumer")
 
+        self.radar_id = int(options.get("topic")[0][23:24])
+
+        if self.radar_id == 7:  # Ria Ativa
+            self.checkpoint = (40.607352, -8.748941), (40.607248, -8.748829)
+            self.angle_offset = 180
+            self.map_lat_lon = (40.607120,-8.748817)
+        elif self.radar_id == 5:  # Ponte Barra
+            self.angle_offset = 120
+            self.map_lat_lon = (40.629072, -8.735576)
+            print("ganda ponte")
+        else:
+            print("Radar not supported!")
+            quit()
+
         if options.get('map'):
             threading.Thread(target=self.generate_map, args=(), daemon=True).start()
 
@@ -110,25 +127,13 @@ class Command(BaseCommand):
         client.on_disconnect = self.on_disconnect
         client.connect(options.get("broker_url")[0], options.get("broker_port")[0])
 
-        radar_id = int(options.get("topic")[0][23:24])
-
-        if radar_id == 7:
-            self.checkpoint = (40.607352, -8.748941), (40.607248, -8.748829)
-        elif radar_id == 8:
-            pass
-        elif radar_id == 9:
-            pass
-        else:
-            print("Radar not supported!")
-            quit()
-
         client.subscribe(options.get("topic")[0])
         client.on_message = self.on_message
 
         client.loop_forever()
 
     def on_message(self, client, userdata, message):
-        # print("\n New Message \n")
+        #print("\n New Message \n")
         sec_time_since_2004 = int((datetime.datetime.utcnow() - datetime.datetime(2004, 1, 1)).total_seconds() * 1000)
         multiplier = math.floor(sec_time_since_2004 / 65536)
 
@@ -174,7 +179,7 @@ class Command(BaseCommand):
 
             speed = math.ceil(x_speed + y_speed * 3.6)
 
-            angle_of_object = math.atan(x_distance / y_distance) + 180
+            angle_of_object = math.atan(x_distance / y_distance) + self.angle_offset
             vector_distance_object = math.sqrt(x_distance ** 2 + y_distance ** 2) / 1000
             object_position = geopy.distance.distance(kilometers=vector_distance_object) \
                 .destination((latitude, longitude), bearing=angle_of_object)
@@ -191,12 +196,13 @@ class Command(BaseCommand):
                 print(speed, str(object_position[0]) + "," + str(object_position[1]), "\n")
 
                 # Save object
+                '''
                 RadarEvent.objects.create(timestamp=time_in_radar_until_seconds,
                                           velocity=speed,
                                           latitude=object_position[0],
                                           longitude=object_position[1],
                                           radar_id=station_id
-                                          )
+                                          )'''
 
         self.map_objects = map_objects
         self.map_time = time_in_radar_epoch
