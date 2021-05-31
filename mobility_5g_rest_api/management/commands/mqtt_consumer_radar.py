@@ -29,7 +29,7 @@ class Command(BaseCommand):
         self.map_objects = []
         self.map_time = datetime.datetime.now()
         self.radar_id = None
-        self.angle_offset = 0
+        self.r_earth = 6371000.0
         self.map_lat_lon = (0, 0)
         self.offset_time = datetime.timedelta(seconds=0, milliseconds=0)
 
@@ -107,12 +107,10 @@ class Command(BaseCommand):
         self.radar_id = int(options.get("topic")[0][23:24])
 
         if self.radar_id == 7:  # Ria Ativa
-            self.checkpoint = (40.607352, -8.748941), (40.607248, -8.748829)
-            self.angle_offset = 180
+            #self.checkpoint = (40.607352, -8.748941), (40.607248, -8.748829)
             self.map_lat_lon = (40.607120, -8.748817)
             self.offset_time = datetime.timedelta(seconds=3, milliseconds=200)
         elif self.radar_id == 5:  # Ponte Barra
-            self.angle_offset = 120
             self.map_lat_lon = (40.629072, -8.735576)
             print("ganda ponte")
         else:
@@ -181,11 +179,10 @@ class Command(BaseCommand):
 
             speed = math.ceil(x_speed + y_speed * 3.6)
 
-            angle_of_object = math.atan(x_distance / y_distance) + self.angle_offset
-            vector_distance_object = math.sqrt(x_distance ** 2 + y_distance ** 2) / 1000
-            object_position = geopy.distance.distance(kilometers=vector_distance_object) \
-                .destination((latitude, longitude), bearing=angle_of_object)
-            object_position = (object_position.latitude, object_position.longitude)
+            new_latitude = (latitude + (y_distance / self.r_earth) * (180 / math.pi))
+            new_longitude = (longitude + (x_distance / self.r_earth) * (180 / math.pi) / math.cos(new_latitude *
+                                                                                                  math.pi / 180))
+            object_position = new_latitude, new_longitude
 
             map_objects.append((object_position[0], object_position[1], object_id, speed))
 
