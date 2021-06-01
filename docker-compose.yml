@@ -146,6 +146,16 @@ services:
                      "--topic", "its_center/inqueue/xml/7/CPM/0/3/3/1/1/0/0/1/1/3/0/2/2/1"]
 
         restart: unless-stopped
+        environment:
+            - ENVIRONMENT=production
+            - DB_NAME=5g-mobility
+            - DB_USER=django
+            - DB_PASSWORD=djangopass
+            - DB_HOST=mongodb
+            - DB_PORT=27017
+            - DB_AUTH=5g-mobility
+            - REDIS_HOST=redis
+            - RABBIT_HOST=rabbitmq
         depends_on:
             - mongodb
         networks:
@@ -157,6 +167,16 @@ services:
                       "--broker_port", "1883", "--client_id", "5g-mobility-consumer-emulator",
                       "--topic", "its_center/inqueue/5g-mobility" ]
         restart: unless-stopped
+        environment:
+            - ENVIRONMENT=production
+            - DB_NAME=5g-mobility
+            - DB_USER=django
+            - DB_PASSWORD=djangopass
+            - DB_HOST=mongodb
+            - DB_PORT=27017
+            - DB_AUTH=5g-mobility
+            - REDIS_HOST=redis
+            - RABBIT_HOST=rabbitmq
         depends_on:
             - mongodb
         networks:
