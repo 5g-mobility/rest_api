@@ -35,9 +35,9 @@ CORS_ALLOW_METHODS = [
 
 if PRODUCTION:
     print("REST API running in production environment.")
-    ALLOWED_HOSTS = ['10.0.13.36']
+    ALLOWED_HOSTS = ['10.0.13.90']
     CORS_ORIGIN_WHITELIST = (
-        'http://10.0.13.36:80',
+        'http://10.0.13.90:80',
     )
 else:
     print("REST API running in development environment.")
