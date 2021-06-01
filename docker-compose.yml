@@ -138,7 +138,7 @@ services:
             - celery-worker
         networks:
             - rabbit_network
-    mqtt-consumer-radar-riaAtiva:
+    mqtt-consumer-radar-ria-ativa:
         build:
             context: .
         entrypoint: ["python", "manage.py", "mqtt_consumer_radar", "--broker_url", "broker.es.av.it.pt",
