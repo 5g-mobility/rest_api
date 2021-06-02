@@ -109,10 +109,10 @@ class Command(BaseCommand):
         if self.radar_id == 7:  # Ria Ativa
             #self.checkpoint = (40.607352, -8.748941), (40.607248, -8.748829)
             self.map_lat_lon = (40.607120, -8.748817)
-            self.offset_time = datetime.timedelta(seconds=3, milliseconds=200)
+            self.offset_time = datetime.timedelta(seconds=13, milliseconds=450)
         elif self.radar_id == 5:  # Ponte Barra
-            self.map_lat_lon = (40.629072, -8.735576)
-            print("ganda ponte")
+            self.map_lat_lon = (40.627790, -8.732017)
+            self.offset_time = datetime.timedelta(seconds=7, milliseconds=700)
         else:
             print("Radar not supported!")
             quit()
