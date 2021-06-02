@@ -242,6 +242,7 @@ class Command(BaseCommand):
     def update_co2(self):
         while True:
             time.sleep(60 * 10)
+            cars_to_delete = []
             for car in self.last_vehicle_status:
                 actualTime = datetime.datetime.now()
                 if (datetime.datetime.now() - self.last_vehicle_status[car][5]).total_seconds() > 300:
@@ -253,8 +254,9 @@ class Command(BaseCommand):
                                              latitude=self.last_vehicle_status[car][7],
                                              longitude=self.last_vehicle_status[car][8],
                                              velocity=self.last_vehicle_status[car][9],
-                                             co2=round(self.last_vehicle_status[car][4], 2))
-                    del self.last_vehicle_status[car]
+                                             co2=round(self.last_vehicle_status[car][4], 2))      
+            for car in cars_to_delete:
+                del self.last_vehicle_status[car]
 
     def update_climate(self):
         while True:
