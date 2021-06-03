@@ -100,8 +100,7 @@ class Command(BaseCommand):
         else:
             return
 
-        print(vehicle_id, timestamp, latitude, longitude, co2_emissions, speed, air_temperature, light_sensor,
-              rain_sensor, fog_light_sensor)
+        #print(vehicle_id, timestamp, latitude, longitude, co2_emissions, speed, air_temperature, light_sensor,rain_sensor, fog_light_sensor)
 
         if vehicle_id not in self.last_vehicle_status:
             self.last_vehicle_status[vehicle_id] = [air_temperature, light_sensor, rain_sensor, fog_light_sensor,
@@ -175,7 +174,7 @@ class Command(BaseCommand):
                 if light_sensor:
                     light_event_class = "LT"
                 else:
-                    light_event_class = "NT"
+                    light_event_class = "NL"
                 Event.objects.create(location=location,
                                      timestamp=timestamp,
                                      event_type="CO",
