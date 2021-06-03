@@ -54,6 +54,11 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         print("Starting MQTT Consumer")
 
+        t = Thread(target=self.update_co2, args=(), daemon=True)
+        t.start()
+        t1 = Thread(target=self.update_climate, args=(), daemon=True)
+        t1.start()
+
         client = mqtt.Client(options.get("client_id")[0])
         client.on_connect = self.on_connect
         client.on_disconnect = self.on_disconnect
@@ -65,7 +70,7 @@ class Command(BaseCommand):
         client.loop_forever()
 
     def on_message(self, client, userdata, message):
-        #print("\nNew Message\n")
+        # print("\nNew Message\n")
         json_msg = json.loads(str(message.payload.decode("utf-8")))
 
         vehicle_id = json_msg["vehicle_id"]
@@ -78,8 +83,6 @@ class Command(BaseCommand):
         light_sensor = json_msg["light_sensor"]
         rain_sensor = json_msg["rain_sensor"]
         fog_light_sensor = json_msg["fog_light_sensor"]
-
-        #print(vehicle_id, timestamp, latitude, longitude, co2_emissions, speed, air_temperature, light_sensor, rain_sensor, fog_light_sensor)
 
         if self.barra_lat_lon_boundaries[0][1] <= latitude <= self.barra_lat_lon_boundaries[0][0]:
             location = "BA"
@@ -96,6 +99,9 @@ class Command(BaseCommand):
                 return
         else:
             return
+
+        print(vehicle_id, timestamp, latitude, longitude, co2_emissions, speed, air_temperature, light_sensor,
+              rain_sensor, fog_light_sensor)
 
         if vehicle_id not in self.last_vehicle_status:
             self.last_vehicle_status[vehicle_id] = [air_temperature, light_sensor, rain_sensor, fog_light_sensor,
@@ -163,7 +169,9 @@ class Command(BaseCommand):
                 self.climate_status[location][3] = air_temperature
 
             if light_sensor != self.last_vehicle_status[vehicle_id][1] or \
-                    (datetime.datetime.now() - self.last_vehicle_status[vehicle_id][5]).total_seconds() > random.randint(5*60, 20*60):
+                    (datetime.datetime.now() - self.last_vehicle_status[vehicle_id][
+                        5]).total_seconds() > random.randint(5 * 60, 20 * 60):
+                self.last_vehicle_status[vehicle_id][1] = light_sensor
                 if light_sensor:
                     light_event_class = "LT"
                 else:
@@ -179,7 +187,9 @@ class Command(BaseCommand):
                 self.add_light_sensor_climate(location, light_sensor)
 
             if rain_sensor != self.last_vehicle_status[vehicle_id][2] or \
-                    (datetime.datetime.now() - self.last_vehicle_status[vehicle_id][5]).total_seconds() > random.randint(5*60, 20*60):
+                    (datetime.datetime.now() - self.last_vehicle_status[vehicle_id][
+                        5]).total_seconds() > random.randint(5 * 60, 20 * 60):
+                self.last_vehicle_status[vehicle_id][2] = rain_sensor
                 if rain_sensor:
                     Event.objects.create(location=location,
                                          timestamp=timestamp,
@@ -192,7 +202,9 @@ class Command(BaseCommand):
                 self.add_rain_sensor_climate(location, rain_sensor)
 
             if fog_light_sensor != self.last_vehicle_status[vehicle_id][3] or \
-                    (datetime.datetime.now() - self.last_vehicle_status[vehicle_id][5]).total_seconds() > random.randint(5*60, 20*60):
+                    (datetime.datetime.now() - self.last_vehicle_status[vehicle_id][
+                        5]).total_seconds() > random.randint(5 * 60, 20 * 60):
+                self.last_vehicle_status[vehicle_id][2] = fog_light_sensor
                 if fog_light_sensor:
                     Event.objects.create(location=location,
                                          timestamp=timestamp,
@@ -234,10 +246,6 @@ class Command(BaseCommand):
 
     def on_connect(self, client, userdata, flags, rc):
         self.stdout.write(self.style.SUCCESS("Connected With Result Code: {}".format(rc)))
-        t = Thread(target=self.update_co2, args=(), daemon=True)
-        t.start()
-        t1 = Thread(target=self.update_climate, args=(), daemon=True)
-        t1.start()
 
     def update_co2(self):
         while True:
@@ -245,7 +253,7 @@ class Command(BaseCommand):
             cars_to_delete = []
             for car in self.last_vehicle_status:
                 actualTime = datetime.datetime.now()
-                if (datetime.datetime.now() - self.last_vehicle_status[car][5]).total_seconds() > 300:
+                if (actualTime - self.last_vehicle_status[car][5]).total_seconds() > 300:
                     if self.last_vehicle_status[car][4] > 0:
                         Event.objects.create(location=self.last_vehicle_status[car][6],
                                              timestamp=actualTime,
@@ -254,7 +262,7 @@ class Command(BaseCommand):
                                              latitude=self.last_vehicle_status[car][7],
                                              longitude=self.last_vehicle_status[car][8],
                                              velocity=self.last_vehicle_status[car][9],
-                                             co2=round(self.last_vehicle_status[car][4], 2))      
+                                             co2=round(self.last_vehicle_status[car][4], 2))
             for car in cars_to_delete:
                 del self.last_vehicle_status[car]
 
@@ -276,7 +284,6 @@ class Command(BaseCommand):
 
                 Climate.objects.create(location=loc, condition=condition, daytime=daytime,
                                        temperature=self.climate_status[loc][3])
-
 
     def on_disconnect(self, client, userdata, rc):
         self.stdout.write(self.style.ERROR("Client Got Disconnected"))
