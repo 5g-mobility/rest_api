@@ -20,6 +20,7 @@ class Command(BaseCommand):
 
     def __init__(self, stdout=None, stderr=None, no_color=False, force_color=False):
         super().__init__(stdout, stderr, no_color, force_color)
+        self.offset_lat_lon = (0, 0)
         self.perceived_objects_on_zone = []
         self.checkpoint = (0, 0), (0, 0)
         self.sec_epoch_2004 = int((datetime.datetime(2004, 1, 1) - datetime.datetime(1970, 1, 1)).total_seconds())
@@ -109,9 +110,11 @@ class Command(BaseCommand):
         if self.radar_id == 7:  # Ria Ativa
             #self.checkpoint = (40.607352, -8.748941), (40.607248, -8.748829)
             self.map_lat_lon = (40.607120, -8.748817)
+            self.offset_lat_lon = (0, 0)
             self.offset_time = datetime.timedelta(seconds=13, milliseconds=450)
         elif self.radar_id == 5:  # Ponte Barra
             self.map_lat_lon = (40.627790, -8.732017)
+            self.offset_lat_lon = (-0.000040, 0)
             self.offset_time = datetime.timedelta(seconds=7, milliseconds=700)
         else:
             print("Radar not supported!")
@@ -182,7 +185,7 @@ class Command(BaseCommand):
             new_latitude = (latitude + (y_distance / self.r_earth) * (180 / math.pi))
             new_longitude = (longitude + (x_distance / self.r_earth) * (180 / math.pi) / math.cos(new_latitude *
                                                                                                   math.pi / 180))
-            object_position = new_latitude, new_longitude
+            object_position = new_latitude + self.offset_lat_lon[0], new_longitude + self.offset_lat_lon[1]
 
             map_objects.append((object_position[0], object_position[1], object_id, speed))
 
