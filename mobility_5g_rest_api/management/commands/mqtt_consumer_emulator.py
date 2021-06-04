@@ -250,20 +250,22 @@ class Command(BaseCommand):
         while True:
             time.sleep(60 * 10)
             cars_to_delete = []
-            for car in self.last_vehicle_status:
+            last_vehicle_status = self.last_vehicle_status
+            for car in last_vehicle_status:
                 actualTime = datetime.datetime.now()
-                if (actualTime - self.last_vehicle_status[car][5]).total_seconds() > 300:
-                    if self.last_vehicle_status[car][4] > 0:
-                        Event.objects.create(location=self.last_vehicle_status[car][6],
+                if (actualTime - last_vehicle_status[car][5]).total_seconds() > 300:
+                    if last_vehicle_status[4] > 0:
+                        Event.objects.create(location=last_vehicle_status[car][6],
                                              timestamp=actualTime,
                                              event_type="CO",
                                              event_class="CF",
-                                             latitude=self.last_vehicle_status[car][7],
-                                             longitude=self.last_vehicle_status[car][8],
-                                             velocity=self.last_vehicle_status[car][9],
-                                             co2=round(self.last_vehicle_status[car][4], 2))
+                                             latitude=last_vehicle_status[car][7],
+                                             longitude=last_vehicle_status[car][8],
+                                             velocity=last_vehicle_status[car][9],
+                                             co2=round(last_vehicle_status[car][4], 2))
             for car in cars_to_delete:
                 del self.last_vehicle_status[car]
+            last_vehicle_status = None
 
     def update_climate(self):
         while True:
