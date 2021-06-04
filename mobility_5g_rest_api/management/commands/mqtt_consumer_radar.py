@@ -111,11 +111,11 @@ class Command(BaseCommand):
             #self.checkpoint = (40.607352, -8.748941), (40.607248, -8.748829)
             self.map_lat_lon = (40.607120, -8.748817)
             self.offset_lat_lon = (0, 0)
-            self.offset_time = datetime.timedelta(seconds=13, milliseconds=450)
+            self.offset_time = datetime.timedelta(seconds=8, milliseconds=200)
         elif self.radar_id == 5:  # Ponte Barra
             self.map_lat_lon = (40.627790, -8.732017)
             self.offset_lat_lon = (-0.000040, 0)
-            self.offset_time = datetime.timedelta(seconds=7, milliseconds=700)
+            self.offset_time = datetime.timedelta(seconds=5, milliseconds=0)
         else:
             print("Radar not supported!")
             quit()
@@ -159,6 +159,8 @@ class Command(BaseCommand):
 
         if time_in_radar_epoch < self.last_time:
             return
+        else:
+            self.last_time = time_in_radar_epoch
 
         time_in_radar_until_seconds = time_in_radar_epoch.replace(microsecond=0)
 
