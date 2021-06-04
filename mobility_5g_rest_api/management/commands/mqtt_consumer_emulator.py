@@ -250,7 +250,7 @@ class Command(BaseCommand):
         while True:
             time.sleep(60 * 10)
             cars_to_delete = []
-            last_vehicle_status = self.last_vehicle_status
+            last_vehicle_status = self.last_vehicle_status.copy()
             for car in last_vehicle_status:
                 actualTime = datetime.datetime.now()
                 if (actualTime - last_vehicle_status[car][5]).total_seconds() > 300:
