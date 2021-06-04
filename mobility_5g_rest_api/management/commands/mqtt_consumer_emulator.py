@@ -254,7 +254,7 @@ class Command(BaseCommand):
             for car in last_vehicle_status:
                 actualTime = datetime.datetime.now()
                 if (actualTime - last_vehicle_status[car][5]).total_seconds() > 300:
-                    if last_vehicle_status[4] > 0:
+                    if last_vehicle_status[car][4] > 0:
                         Event.objects.create(location=last_vehicle_status[car][6],
                                              timestamp=actualTime,
                                              event_type="CO",
