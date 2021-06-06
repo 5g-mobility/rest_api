@@ -288,3 +288,4 @@ class Command(BaseCommand):
 
     def on_disconnect(self, client, userdata, rc):
         self.stdout.write(self.style.ERROR("Client Got Disconnected"))
+        quit()
