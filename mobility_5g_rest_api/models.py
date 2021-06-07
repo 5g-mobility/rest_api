@@ -60,6 +60,13 @@ class Event(models.Model):
 
     class Meta:
         ordering = ["-timestamp"]
+        indexes = [
+            models.Index(fields=['location', 'event_type', 'event_class', '-timestamp', ]),
+            models.Index(fields=['-timestamp', 'event_type', 'event_class', 'location']),
+            models.Index(fields=['-timestamp', 'event_type', 'location']),
+            models.Index(fields=['-timestamp', 'event_class', 'location']),
+            models.Index(fields=['-timestamp', 'event_type', '-velocity', ]),
+        ]
 
     def __str__(self):
         return str(self.timestamp) + ", " + str(self.location) + ": " + str(self.event_type) + ": " + str(
@@ -164,6 +171,10 @@ class Climate(models.Model):
 
     class Meta:
         ordering = ["-timestamp"]
+        indexes = [
+            models.Index(fields=['location', 'condition', ]),
+            models.Index(fields=['-timestamp', 'location', ])
+        ]
 
     def __str__(self):
         return str(self.timestamp) + ", " + str(self.condition) + ": " + str(self.daytime) + ": " + str(
@@ -192,6 +203,9 @@ class DailyInflow(models.Model):
 
     class Meta:
         ordering = ["-date"]
+        indexes = [
+            models.Index(fields=['-date', 'location', ]),
+        ]
 
     def __str__(self):
         return str(self.date) + ", " + str(self.maximum) + ": " + str(self.current)
@@ -232,3 +246,6 @@ class RadarEvent(models.Model):
 
     class Meta:
         ordering = ["-timestamp"]
+        indexes = [
+            models.Index(fields=['-timestamp', 'radar_id', ]),
+        ]
