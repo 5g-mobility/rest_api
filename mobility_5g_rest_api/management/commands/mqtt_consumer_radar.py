@@ -1,8 +1,8 @@
 import math
 import datetime
 
-import geopy.distance
-from dash.dependencies import Output, Input, State
+from geopy import distance
+from dash.dependencies import Output, Input
 from django.core.management.base import BaseCommand
 import xml.etree.cElementTree as ET
 import paho.mqtt.client as mqtt
@@ -108,14 +108,15 @@ class Command(BaseCommand):
         self.radar_id = int(options.get("topic")[0][23:24])
 
         if self.radar_id == 7:  # Ria Ativa
-            self.checkpoint = (40.607342, -8.748941), (40.607248, -8.748829)
+            self.checkpoint = (40.607300, -8.748931), (40.607246, -8.748800)
             self.map_lat_lon = (40.607120, -8.748817)
             self.offset_lat_lon = (0, 0.000040)
-            self.offset_time = datetime.timedelta(seconds=7, milliseconds=525)
+            self.offset_time = datetime.timedelta(seconds=5, milliseconds=800)
         elif self.radar_id == 5:  # Ponte Barra
+            self.checkpoint = (40.627990, -8.732713)
             self.map_lat_lon = (40.627790, -8.732017)
             self.offset_lat_lon = (-0.000040, 0)
-            self.offset_time = datetime.timedelta(seconds=5, milliseconds=0)
+            self.offset_time = datetime.timedelta(seconds=5, milliseconds=800)
         else:
             print("Radar not supported!")
             quit()
@@ -180,9 +181,9 @@ class Command(BaseCommand):
             if object_id in self.perceived_objects_on_zone:
                 continue
 
-            # print("\n", object_id, x_distance, y_distance, x_speed, y_speed)
+            #print("\n", object_id, x_distance, y_distance, x_speed, y_speed)
 
-            speed = math.ceil(x_speed + y_speed * 3.6)
+            speed = math.ceil(math.sqrt(x_speed**2 + y_speed**2) * 3.6) * (1 if x_speed + y_speed > 0 else -1)
 
             new_latitude = (latitude + (y_distance / self.r_earth) * (180 / math.pi))
             new_longitude = (longitude + (x_distance / self.r_earth) * (180 / math.pi) / math.cos(new_latitude *
@@ -190,9 +191,12 @@ class Command(BaseCommand):
             object_position = new_latitude + self.offset_lat_lon[0], new_longitude + self.offset_lat_lon[1]
 
             map_objects.append((object_position[0], object_position[1], object_id, speed))
+            #map_objects.append((self.checkpoint[0][0], self.checkpoint[0][1], 8178372183, 22))
+            #map_objects.append((self.checkpoint[1][0], self.checkpoint[1][1], 8178372183, 22))
 
-            if self.checkpoint[1][0] <= object_position[0] <= self.checkpoint[0][0] and self.checkpoint[0][1] <= \
-                    object_position[1] <= self.checkpoint[1][1]:
+
+            if (self.radar_id == 7 and  self.checkpoint[1][0] <= object_position[0] <= self.checkpoint[0][0] and self.checkpoint[0][1] <= \
+                    object_position[1] <= self.checkpoint[1][1]) or (self.radar_id == 5 and distance.distance(self.checkpoint, object_position).km <= 0.013):
                 self.perceived_objects_on_zone.append(object_id)
 
                 # print(time_in_radar_epoch)
@@ -230,3 +234,4 @@ class Command(BaseCommand):
 
     def on_disconnect(self, client, userdata, rc):
         self.stdout.write(self.style.ERROR("Client Got Disconnected"))
+        quit()
