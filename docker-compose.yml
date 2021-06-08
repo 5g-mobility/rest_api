@@ -160,7 +160,7 @@ services:
             - mongodb
         networks:
             - mongodb_network
-    mqtt-consumer-radar-ponteBarra:
+    mqtt-consumer-radar-ponte-barra:
         build:
             context: .
         entrypoint: [ "python", "manage.py", "mqtt_consumer_radar", "--broker_url", "broker.es.av.it.pt",

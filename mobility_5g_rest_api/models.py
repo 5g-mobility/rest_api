@@ -44,6 +44,7 @@ class Event(models.Model):
     event_class = models.CharField(
         max_length=2, choices=EVENT_CLASS)
     velocity = models.IntegerField(
+        blank=True,
         validators=[
             MaxValueValidator(400),
             MinValueValidator(-400)
@@ -209,9 +210,9 @@ class DailyInflow(models.Model):
 
 class RadarEvent(models.Model):
     RADAR = [
-        ("DN", "Duna"),
+        ("1", "Duna"),
         ("7", "Ria Ativa"),
-        ("PT", "Ponte Barra")
+        ("5", "Ponte Barra")
     ]
 
     timestamp = models.DateTimeField()
@@ -228,7 +229,7 @@ class RadarEvent(models.Model):
         validators=[MinValueValidator(-180.0), MaxValueValidator(180)], blank=True
     )
 
-    radar_id = models.CharField(max_length=2, choices=RADAR)
+    radar_id = models.CharField(max_length=1, choices=RADAR)
 
     class Meta:
         ordering = ["-timestamp"]

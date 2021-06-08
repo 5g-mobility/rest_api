@@ -206,13 +206,13 @@ class Command(BaseCommand):
                 print(speed, str(object_position[0]) + "," + str(object_position[1]), "\n")
 
                 # Save object
-                '''
-                RadarEvent.objects.create(timestamp=time_in_radar_until_seconds,
-                                          velocity=speed,
-                                          latitude=object_position[0],
-                                          longitude=object_position[1],
-                                          radar_id=station_id
-                                          )'''
+                if speed != 0:
+                    RadarEvent.objects.create(timestamp=time_in_radar_until_seconds,
+                                              velocity=speed,
+                                              latitude=object_position[0],
+                                              longitude=object_position[1],
+                                              radar_id=station_id
+                                              )
 
         self.map_objects = map_objects
         self.map_time = time_in_radar_epoch
