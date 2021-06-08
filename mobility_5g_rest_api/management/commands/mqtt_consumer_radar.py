@@ -108,10 +108,10 @@ class Command(BaseCommand):
         self.radar_id = int(options.get("topic")[0][23:24])
 
         if self.radar_id == 7:  # Ria Ativa
-            self.checkpoint = (40.607300, -8.748931), (40.607246, -8.748800)
+            self.checkpoint = (40.607300, -8.748921), (40.607173, -8.748802)
             self.map_lat_lon = (40.607120, -8.748817)
             self.offset_lat_lon = (0, 0.000040)
-            self.offset_time = datetime.timedelta(seconds=5, milliseconds=800)
+            self.offset_time = datetime.timedelta(seconds=5, milliseconds=000)
         elif self.radar_id == 5:  # Ponte Barra
             self.checkpoint = (40.627990, -8.732713)
             self.map_lat_lon = (40.627790, -8.732017)
@@ -178,6 +178,9 @@ class Command(BaseCommand):
 
             perceived_objects_ids.append(object_id)
 
+            map_objects.append((self.checkpoint[0][0], self.checkpoint[0][1], 8178372183, 22))
+            map_objects.append((self.checkpoint[1][0], self.checkpoint[1][1], 8178372183, 22))
+
             if object_id in self.perceived_objects_on_zone:
                 continue
 
@@ -191,16 +194,15 @@ class Command(BaseCommand):
             object_position = new_latitude + self.offset_lat_lon[0], new_longitude + self.offset_lat_lon[1]
 
             map_objects.append((object_position[0], object_position[1], object_id, speed))
-            #map_objects.append((self.checkpoint[0][0], self.checkpoint[0][1], 8178372183, 22))
-            #map_objects.append((self.checkpoint[1][0], self.checkpoint[1][1], 8178372183, 22))
 
 
             if (self.radar_id == 7 and  self.checkpoint[1][0] <= object_position[0] <= self.checkpoint[0][0] and self.checkpoint[0][1] <= \
                     object_position[1] <= self.checkpoint[1][1]) or (self.radar_id == 5 and distance.distance(self.checkpoint, object_position).km <= 0.013):
                 self.perceived_objects_on_zone.append(object_id)
 
-                # print(time_in_radar_epoch)
+
                 print("\n", time_in_radar_until_seconds)
+                print(time_in_radar_epoch)
                 print(speed, str(object_position[0]) + "," + str(object_position[1]), "\n")
 
                 # Save object
