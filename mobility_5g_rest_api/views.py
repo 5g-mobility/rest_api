@@ -136,15 +136,13 @@ def circulation_vehicles(request):
     datelte = request.query_params.get('timestamp__lte', datetime.datetime.now())
 
     try:
-        data['cars'] = Event.objects.filter(location=location, event_type="RT", event_class="CA",
-                                            timestamp__gte=dategte,
-                                            timestamp__lte=datelte).count()
-        data['trucks'] = Event.objects.filter(location=location, event_type="RT", event_class="TR",
-                                              timestamp__gte=dategte,
-                                              timestamp__lte=datelte).count()
-        data['motorcycles'] = Event.objects.filter(location=location, event_type="RT", event_class="MC",
-                                                   timestamp__gte=dategte,
-                                                   timestamp__lte=datelte).count()
+        data['cars'] = Event.objects.filter(timestamp__gte=dategte, timestamp__lte=datelte,
+                                            event_type="RT", event_class="CA", location=location).count()
+        data['trucks'] = Event.objects.filter(timestamp__gte=dategte, timestamp__lte=datelte,
+                                              event_type="RT", event_class="TR", location=location).count()
+        data['motorcycles'] = Event.objects.filter(timestamp__gte=dategte, timestamp__lte=datelte,
+                                                event_type="RT", event_class="MC", location=location
+                                                   ).count()
     except:
         data['error'] = "Location must be RA, DN or PT and timestamp__gte is needed"
         st = status.HTTP_400_BAD_REQUEST
@@ -165,8 +163,8 @@ def top_speed_road_traffic_summary(request):
             dategte = today - datetime.timedelta(days=x)
             datelt = dategte + datetime.timedelta(days=1)
 
-            day_events = Event.objects.filter(location=location, timestamp__lt=datelt, timestamp__gte=dategte,
-                                              event_type="RT")
+            day_events = Event.objects.filter(timestamp__lt=datelt, timestamp__gte=dategte, event_type="RT",
+                                              location=location)
 
             number_this_day = day_events.count()
             if number_this_day > 0:
@@ -192,7 +190,7 @@ def max_daily_inflow_summary(request):
             date = today - datetime.timedelta(days=x)
 
             try:
-                day_daily_inflow = DailyInflow.objects.get(location=location, date=date)
+                day_daily_inflow = DailyInflow.objects.get(date=date, location=location)
                 data[location][date.strftime("%d/%m/%y")] = day_daily_inflow.maximum
             except DailyInflow.DoesNotExist:
                 data[location][date.strftime("%d/%m/%y")] = 0
@@ -211,15 +209,12 @@ def bike_lanes_stats(request):
     datelte = request.query_params.get('timestamp__lte', datetime.datetime.now())
 
     try:
-        data['people'] = Event.objects.filter(location=location, event_type="RT", event_class="PE",
-                                              timestamp__gte=dategte,
-                                              timestamp__lte=datelte).count()
-        data['animals'] = Event.objects.filter(location=location, event_type="RT", event_class="BC",
-                                               timestamp__gte=dategte,
-                                               timestamp__lte=datelte).count()
-        data['bikes'] = Event.objects.filter(location=location, event_type="RT", event_class="AN",
-                                             timestamp__gte=dategte,
-                                             timestamp__lte=datelte).count()
+        data['people'] = Event.objects.filter(timestamp__gte=dategte, timestamp__lte=datelte, event_type="RT",
+                                              event_class="PE", location=location).count()
+        data['animals'] = Event.objects.filter(timestamp__gte=dategte, timestamp__lte=datelte,
+                                               event_type="RT", event_class="BC", location=location,).count()
+        data['bikes'] = Event.objects.filter(timestamp__gte=dategte, timestamp__lte=datelte, event_type="RT",
+                                             event_class="AN", location=location).count()
     except:
         data['error'] = "Location must be RA, DN or PT and timestamp__gte is needed"
         st = status.HTTP_400_BAD_REQUEST
@@ -238,8 +233,8 @@ def current_traffic_stats(request):
 
     for location in ["RA", "PT"]:  # Add DN to include Duna data later on
         data[location] = {}
-        objects = Event.objects.filter(location=location, timestamp__lte=now, timestamp__gte=thirty_sec_ago,
-                                       event_type="RT")
+        objects = Event.objects.filter(timestamp__lte=now,
+                                       timestamp__gte=thirty_sec_ago, event_type="RT", location=location)
         n_objects = objects.count()
         if n_objects > 0:
             avg_speed = objects.aggregate(Avg('velocity'))
@@ -252,8 +247,8 @@ def current_traffic_stats(request):
         else:
             data[location]['traffic'] = 'Flowing Normally'
 
-        n_people = Event.objects.filter(location=location, timestamp__lte=now, timestamp__gte=thirty_sec_ago,
-                                        event_class="PE").count()
+        n_people = Event.objects.filter(timestamp__lte=now, timestamp__gte=thirty_sec_ago, event_class="PE",
+                                        location=location).count()
         data[location]['people'] = n_people
 
     return Response(data, status=st)
