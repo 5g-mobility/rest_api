@@ -129,7 +129,7 @@ class Command(BaseCommand):
             client.username_pw_set(options.get("broker_user")[0], options.get("broker_pw")[0])
         client.on_connect = self.on_connect
         client.on_disconnect = self.on_disconnect
-        client.connect(options.get("broker_url")[0], options.get("broker_port")[0])
+        client.connect(options.get("broker_url")[0], options.get("broker_port")[0], keepalive=5)
 
         client.subscribe(options.get("topic")[0])
         client.on_message = self.on_message
@@ -178,8 +178,8 @@ class Command(BaseCommand):
 
             perceived_objects_ids.append(object_id)
 
-            map_objects.append((self.checkpoint[0][0], self.checkpoint[0][1], 8178372183, 22))
-            map_objects.append((self.checkpoint[1][0], self.checkpoint[1][1], 8178372183, 22))
+            #map_objects.append((self.checkpoint[0][0], self.checkpoint[0][1], 8178372183, 22))
+            #map_objects.append((self.checkpoint[1][0], self.checkpoint[1][1], 8178372183, 22))
 
             if object_id in self.perceived_objects_on_zone:
                 continue

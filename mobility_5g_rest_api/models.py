@@ -88,7 +88,7 @@ class Event(models.Model):
             )
 
         if (self.event_class == "AN" or self.event_class == "PE") and (
-                self.event_type != "BL" or self.event_type != "RD"):
+                self.event_type != "BL" and self.event_type != "RD"):
             raise ValidationError(
                 {'event_type': 'Event_class Animal and Person are only allowed for the Bike Lanes or Road Danger '
                                'event type'}

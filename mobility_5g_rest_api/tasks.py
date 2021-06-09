@@ -61,18 +61,18 @@ def sensor_fusion(json_data):
                                          timestamp=timestamp_event)
 
         if vehicles_to_process:
-            neg_velocity_radar_events = RadarEvent.objects.filter(timestamp=timestamp_event,
-                                                                  radar_id=json_obj[0]['radarId'],
-                                                                  velocity__lt=0)
-            pos_velocity_radar_events = RadarEvent.objects.filter(timestamp=timestamp_event,
-                                                                  radar_id=json_obj[0]['radarId'],
-                                                                  velocity__gt=0)
-            last_5_seconds_radar_events_gt = RadarEvent.objects.filter(
+            neg_velocity_radar_events = list(RadarEvent.objects.filter(timestamp=timestamp_event,
+                                                                       radar_id=json_obj[0]['radarId'],
+                                                                       velocity__lt=0))
+            pos_velocity_radar_events = list(RadarEvent.objects.filter(timestamp=timestamp_event,
+                                                                       radar_id=json_obj[0]['radarId'],
+                                                                       velocity__gt=0))
+            last_5_seconds_radar_events_gt = list(RadarEvent.objects.filter(
                 timestamp__gte=(timestamp_event - timedelta(seconds=5)),
-                radar_id=json_obj[0]['radarId'], velocity__gt=0)
-            last_5_seconds_radar_events_lt = RadarEvent.objects.filter(
+                radar_id=json_obj[0]['radarId'], velocity__gt=0))
+            last_5_seconds_radar_events_lt = list(RadarEvent.objects.filter(
                 timestamp__gte=(timestamp_event - timedelta(seconds=5)),
-                radar_id=json_obj[0]['radarId'], velocity__lt=0)
+                radar_id=json_obj[0]['radarId'], velocity__lt=0))
 
             for event in reversed(vehicles_to_process):
                 if event['is_stopped']:
@@ -88,18 +88,20 @@ def sensor_fusion(json_data):
                             Event.objects.create(location=location,
                                                  event_type="RT",
                                                  event_class=event_class,
-                                                 timestamp=timestamp_event,
+                                                 timestamp=radar_event.timestamp,
                                                  velocity=radar_event.velocity)
                             radar_event.delete()
+                            pos_velocity_radar_events.remove(radar_event)
                         else:
                             if last_5_seconds_radar_events_gt:
                                 radar_event = last_5_seconds_radar_events_gt[0]
                                 Event.objects.create(location=location,
                                                      event_type="RT",
                                                      event_class=event_class,
-                                                     timestamp=timestamp_event,
+                                                     timestamp=radar_event.timestamp,
                                                      velocity=radar_event.velocity)
                                 radar_event.delete()
+                                last_5_seconds_radar_events_gt.remove(radar_event)
 
                     elif event['speed'] < 0:
                         if neg_velocity_radar_events:
@@ -107,18 +109,20 @@ def sensor_fusion(json_data):
                             Event.objects.create(location=location,
                                                  event_type="RT",
                                                  event_class=event_class,
-                                                 timestamp=timestamp_event,
+                                                 timestamp=radar_event.timestamp,
                                                  velocity=radar_event.velocity)
                             radar_event.delete()
+                            neg_velocity_radar_events.remove(radar_event)
                         else:
                             if last_5_seconds_radar_events_lt:
                                 radar_event = last_5_seconds_radar_events_lt[0]
                                 Event.objects.create(location=location,
                                                      event_type="RT",
                                                      event_class=event_class,
-                                                     timestamp=timestamp_event,
+                                                     timestamp=radar_event.timestamp,
                                                      velocity=radar_event.velocity)
                                 radar_event.delete()
+                                last_5_seconds_radar_events_lt.remove(radar_event)
 
         radar_events = RadarEvent.objects.filter(timestamp=timestamp_event, radar_id=json_obj[0]['radarId'])
         for event in radar_events:
@@ -126,7 +130,7 @@ def sensor_fusion(json_data):
                 Event.objects.create(location=location,
                                      event_type="RT",
                                      event_class="CA",
-                                     timestamp=timestamp_event,
+                                     timestamp=event.timestamp,
                                      velocity=event.velocity)
             event.delete()
 
