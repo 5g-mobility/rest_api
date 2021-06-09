@@ -193,6 +193,25 @@ services:
             - mongodb
         networks:
             - mongodb_network
+    processor_old_radar_events:
+        build:
+            context: .
+        entrypoint: [ "python", "manage.py", "process_old_radar_events"]
+        restart: unless-stopped
+        environment:
+            - ENVIRONMENT=production
+            - DB_NAME=5g-mobility
+            - DB_USER=django
+            - DB_PASSWORD=djangopass
+            - DB_HOST=mongodb
+            - DB_PORT=27017
+            - DB_AUTH=5g-mobility
+            - REDIS_HOST=redis
+            - RABBIT_HOST=rabbitmq
+        depends_on:
+            - mongodb
+        networks:
+            - mongodb_network
 
 
 volumes:
