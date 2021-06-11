@@ -80,6 +80,7 @@ services:
             - 8000:8000
         environment:
             - ENVIRONMENT=production
+            - EXTERNAL_IP=${EXTERNAL_IP}
             - DB_NAME=5g-mobility
             - DB_USER=django
             - DB_PASSWORD=djangopass

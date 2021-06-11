@@ -35,9 +35,15 @@ CORS_ALLOW_METHODS = [
 
 if PRODUCTION:
     print("REST API running in production environment.")
-    ALLOWED_HOSTS = ['10.0.13.90']
+    EXTERNAL_IP = os.environ.get("EXTERNAL_IP", None)
+
+    if not EXTERNAL_IP:
+        print("No EXTERNAL_IP ENV detected!")
+        quit()
+
+    ALLOWED_HOSTS = ['{}'.format(EXTERNAL_IP)]
     CORS_ORIGIN_WHITELIST = (
-        'http://10.0.13.90',
+        'http://{}'.format(EXTERNAL_IP),
     )
 else:
     print("REST API running in development environment.")
