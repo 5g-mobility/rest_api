@@ -103,7 +103,6 @@ services:
         command: -A rest_api worker --loglevel=info
         restart: unless-stopped
         environment:
-            - ENVIRONMENT=production
             - DB_NAME=5g-mobility
             - DB_USER=django
             - DB_PASSWORD=djangopass
@@ -148,7 +147,6 @@ services:
 
         restart: unless-stopped
         environment:
-            - ENVIRONMENT=production
             - DB_NAME=5g-mobility
             - DB_USER=django
             - DB_PASSWORD=djangopass
@@ -183,7 +181,6 @@ services:
                       "--topic", "its_center/inqueue/5g-mobility" ]
         restart: unless-stopped
         environment:
-            - ENVIRONMENT=production
             - DB_NAME=5g-mobility
             - DB_USER=django
             - DB_PASSWORD=djangopass
@@ -203,7 +200,6 @@ services:
         entrypoint: [ "python", "manage.py", "process_old_radar_events"]
         restart: unless-stopped
         environment:
-            - ENVIRONMENT=production
             - DB_NAME=5g-mobility
             - DB_USER=django
             - DB_PASSWORD=djangopass
