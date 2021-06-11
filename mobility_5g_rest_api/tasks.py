@@ -1,6 +1,6 @@
 # Create your tasks here
 from __future__ import absolute_import, unicode_literals
-from mobility_5g_rest_api.models import Event, RadarEvent, DailyInflow
+from mobility_5g_rest_api.models import Event, RadarEvent
 import json
 from datetime import datetime, timedelta
 from celery import shared_task

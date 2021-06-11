@@ -108,10 +108,10 @@ class Command(BaseCommand):
         self.radar_id = int(options.get("topic")[0][23:24])
 
         if self.radar_id == 7:  # Ria Ativa
-            self.checkpoint = (40.607300, -8.748921), (40.607173, -8.748802)
+            self.checkpoint = (40.607344, -8.748931), (40.6071020, -8.748794)
             self.map_lat_lon = (40.607120, -8.748817)
             self.offset_lat_lon = (0, -0.000075)
-            self.offset_time = datetime.timedelta(seconds=5, milliseconds=000)
+            self.offset_time = datetime.timedelta(seconds=5, milliseconds=150)
         elif self.radar_id == 5:  # Ponte Barra
             self.checkpoint = (40.627990, -8.732713)
             self.map_lat_lon = (40.627790, -8.732017)
@@ -178,8 +178,8 @@ class Command(BaseCommand):
 
             perceived_objects_ids.append(object_id)
 
-            #map_objects.append((self.checkpoint[0][0], self.checkpoint[0][1], 8178372183, 22))
-            #map_objects.append((self.checkpoint[1][0], self.checkpoint[1][1], 8178372183, 22))
+            map_objects.append((self.checkpoint[0][0], self.checkpoint[0][1], 8178372183, 22))
+            map_objects.append((self.checkpoint[1][0], self.checkpoint[1][1], 8178372183, 22))
 
             if object_id in self.perceived_objects_on_zone:
                 continue

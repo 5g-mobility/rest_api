@@ -1,7 +1,7 @@
 import time
 from datetime import datetime, timedelta
 from django.core.management.base import BaseCommand
-from mobility_5g_rest_api.models import Event, RadarEvent, DailyInflow
+from mobility_5g_rest_api.models import Event, RadarEvent
 from mobility_5g_rest_api.utils import process_daily_inflow
 
 
