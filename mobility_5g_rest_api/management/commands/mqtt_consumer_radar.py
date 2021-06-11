@@ -113,10 +113,10 @@ class Command(BaseCommand):
             self.offset_lat_lon = (0, -0.000075)
             self.offset_time = datetime.timedelta(seconds=5, milliseconds=500)
         elif self.radar_id == 5:  # Ponte Barra
-            self.checkpoint = (40.627990, -8.732713)
+            self.checkpoint = (40.628067, -8.732920)
             self.map_lat_lon = (40.627790, -8.732017)
             self.offset_lat_lon = (-0.000040, 0)
-            self.offset_time = datetime.timedelta(seconds=5, milliseconds=800)
+            self.offset_time = datetime.timedelta(seconds=6, milliseconds=15)
         else:
             print("Radar not supported!")
             quit()
@@ -163,8 +163,6 @@ class Command(BaseCommand):
         else:
             self.last_time = time_in_radar_epoch
 
-        time_in_radar_until_seconds = time_in_radar_epoch.replace(microsecond=0)
-
         perceived_objects_ids = []
         map_objects = []
 
@@ -178,15 +176,15 @@ class Command(BaseCommand):
 
             perceived_objects_ids.append(object_id)
 
-            map_objects.append((self.checkpoint[0][0], self.checkpoint[0][1], 8178372183, 22))
-            map_objects.append((self.checkpoint[1][0], self.checkpoint[1][1], 8178372183, 22))
+            # map_objects.append((self.checkpoint[0], self.checkpoint[1], 8178372183, 22))
+            # map_objects.append((self.checkpoint[1][0], self.checkpoint[1][1], 8178372183, 22))
 
             if object_id in self.perceived_objects_on_zone:
                 continue
 
-            #print("\n", object_id, x_distance, y_distance, x_speed, y_speed)
+            # print("\n", object_id, x_distance, y_distance, x_speed, y_speed)
 
-            speed = math.ceil(math.sqrt(x_speed**2 + y_speed**2) * 3.6) * (1 if x_speed + y_speed > 0 else -1)
+            speed = math.ceil(math.sqrt(x_speed ** 2 + y_speed ** 2) * 3.6) * (1 if x_speed + y_speed > 0 else -1)
 
             new_latitude = (latitude + (y_distance / self.r_earth) * (180 / math.pi))
             new_longitude = (longitude + (x_distance / self.r_earth) * (180 / math.pi) / math.cos(new_latitude *
@@ -195,26 +193,33 @@ class Command(BaseCommand):
 
             map_objects.append((object_position[0], object_position[1], object_id, speed))
 
-
-            if (self.radar_id == 7 and  self.checkpoint[1][0] <= object_position[0] <= self.checkpoint[0][0] and self.checkpoint[0][1] <= \
-                    object_position[1] <= self.checkpoint[1][1]) or (self.radar_id == 5 and distance.distance(self.checkpoint, object_position).km <= 0.013):
+            if (self.radar_id == 7 and self.checkpoint[1][0] <= object_position[0] <= self.checkpoint[0][0] and
+                self.checkpoint[0][1] <= \
+                object_position[1] <= self.checkpoint[1][1]) or (
+                    self.radar_id == 5 and distance.distance(self.checkpoint, object_position).km <= 0.050):
                 self.perceived_objects_on_zone.append(object_id)
-
-
-                print("\n", time_in_radar_until_seconds)
-                print(time_in_radar_epoch)
-                print(speed, str(object_position[0]) + "," + str(object_position[1]), "\n")
 
                 # Save object
                 if speed != 0:
-                    '''
+
+                    if station_id == 5:
+                        if speed > 0:
+                            time_in_radar_epoch -= datetime.timedelta(milliseconds=250)
+                        else:
+                            time_in_radar_epoch += datetime.timedelta(seconds=1)
+
+                    time_in_radar_until_seconds = time_in_radar_epoch.replace(microsecond=0)
+
+                    # print("\n", time_in_radar_until_seconds)
+                    # print(time_in_radar_epoch)
+                    # print(speed, str(object_position[0]) + "," + str(object_position[1]), "\n")
+
                     RadarEvent.objects.create(timestamp=time_in_radar_until_seconds,
                                               velocity=speed,
                                               latitude=object_position[0],
                                               longitude=object_position[1],
                                               radar_id=station_id
                                               )
-                                              '''
 
         self.map_objects = map_objects
         self.map_time = time_in_radar_epoch
