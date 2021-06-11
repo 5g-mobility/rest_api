@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sleep 20
+nc -zvv mongodb 27017
 
 python manage.py collectstatic --noinput
 python manage.py makemigrations

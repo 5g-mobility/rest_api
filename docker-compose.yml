@@ -69,7 +69,6 @@ services:
             - redis_network
     django:
         build: .
-        profiles: ["prod"]
         entrypoint: ["sh", "./entrypoint.sh"]
         restart: unless-stopped
         container_name: django
@@ -117,6 +116,7 @@ services:
             - rabbitmq
             - redis
             - mongodb
+            - django
         networks:
             - rabbit_network
             - redis_network
@@ -159,6 +159,7 @@ services:
             - RABBIT_HOST=rabbitmq
         depends_on:
             - mongodb
+            - django
         networks:
             - mongodb_network
     mqtt-consumer-radar-ponte-barra:
@@ -171,6 +172,7 @@ services:
         restart: unless-stopped
         depends_on:
             - mongodb
+            - django
         networks:
             - mongodb_network
     mqtt-consumer-emulator:
@@ -192,6 +194,7 @@ services:
             - RABBIT_HOST=rabbitmq
         depends_on:
             - mongodb
+            - django
         networks:
             - mongodb_network
     processor_old_radar_events:
@@ -211,6 +214,7 @@ services:
             - RABBIT_HOST=rabbitmq
         depends_on:
             - mongodb
+            - django
         networks:
             - mongodb_network
 

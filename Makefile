@@ -63,12 +63,7 @@ run: ## Run the Django server
 
 .PHONY: prod
 prod: ## Start all services containers
-	docker-compose build django
 	docker-compose build
-	if [[ -z "${workers}" ]]; then docker-compose --profile prod up -d; else docker-compose --profile prod up -d --scale celery-worker=$(workers); fi
+	docker-compose up -d
 
-.PHONY: dev
-dev: ## Start all services containers needed for Django
-	docker-compose build
-	if [[ -z "${workers}" ]]; then docker-compose up -d; else docker-compose up -d --scale celery-worker=$(workers); fi
 

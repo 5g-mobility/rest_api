@@ -32,26 +32,11 @@ A **Makefile** was created with all the commands needed to run the application. 
 
 To facilitate, it is being used Docker Compose to run the multiple services.
 
-  
-
-**Run the development environment** 
-
-In the development environment all the services needed for the Django application are started in Docker containers, letting the user run Django on his personal computer. The following command will start the services containers with one Celery worker:
-
-``make dev``
-
 **Run the production environment** 
 
 In the production environment all the services are started on Docker containers. The following command will start the services containers with one Celery worker:
 
 ``make prod``
-
-**Run the above with more than one Celery worker**
-
-To customize the number of Celery workers initiated with Docker containers just pass it using the Makefile. The following example will enable 5 Celery workers on the development environment.
-
-``make dev workers=5``
-  
 
 **Other useful Make commands**
 
