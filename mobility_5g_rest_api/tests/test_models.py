@@ -242,7 +242,7 @@ class RadarEventTest(TestCase):
         velocity = fake.pydecimal(2, 2, False, -400, 400)
         latitude = fake.pydecimal(2, 2, False, -90, 90)
         longitude = fake.pydecimal(3, 2, False, -180, 180)
-        radar_id = "DN"
+        radar_id = "1"
 
         r_event = RadarEvent.objects.create(
             timestamp=datetime.now(),

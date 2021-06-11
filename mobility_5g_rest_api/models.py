@@ -44,6 +44,7 @@ class Event(models.Model):
     event_class = models.CharField(
         max_length=2, choices=EVENT_CLASS)
     velocity = models.IntegerField(
+        blank=True,
         validators=[
             MaxValueValidator(400),
             MinValueValidator(-400)
@@ -87,7 +88,7 @@ class Event(models.Model):
             )
 
         if (self.event_class == "AN" or self.event_class == "PE") and (
-                self.event_type != "BL" or self.event_type != "RD"):
+                self.event_type != "BL" and self.event_type != "RD"):
             raise ValidationError(
                 {'event_type': 'Event_class Animal and Person are only allowed for the Bike Lanes or Road Danger '
                                'event type'}
@@ -192,12 +193,12 @@ class DailyInflow(models.Model):
     maximum = models.IntegerField(
         validators=[
             MinValueValidator(0)
-        ]
+        ], default=0
     )
     current = models.IntegerField(
         validators=[
             MinValueValidator(0)
-        ]
+        ], default=0
     )
     date = models.DateField()
 
@@ -217,15 +218,17 @@ class DailyInflow(models.Model):
             )
 
     def save(self, *args, **kwargs):
+        if self.current > self.maximum:
+            self.maximum = self.current
         self.full_clean()
         return super().save(*args, **kwargs)
 
 
 class RadarEvent(models.Model):
     RADAR = [
-        ("DN", "Duna"),
+        ("1", "Duna"),
         ("7", "Ria Ativa"),
-        ("PT", "Ponte Barra")
+        ("5", "Ponte Barra")
     ]
 
     timestamp = models.DateTimeField()
@@ -242,7 +245,7 @@ class RadarEvent(models.Model):
         validators=[MinValueValidator(-180.0), MaxValueValidator(180)], blank=True
     )
 
-    radar_id = models.CharField(max_length=2, choices=RADAR)
+    radar_id = models.CharField(max_length=1, choices=RADAR)
 
     class Meta:
         ordering = ["-timestamp"]

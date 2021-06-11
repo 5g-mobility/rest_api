@@ -160,7 +160,7 @@ services:
             - mongodb
         networks:
             - mongodb_network
-    mqtt-consumer-radar-ponteBarra:
+    mqtt-consumer-radar-ponte-barra:
         build:
             context: .
         entrypoint: [ "python", "manage.py", "mqtt_consumer_radar", "--broker_url", "broker.es.av.it.pt",
@@ -178,6 +178,25 @@ services:
         entrypoint: [ "python", "manage.py", "mqtt_consumer_emulator", "--broker_url", "broker.es.av.it.pt",
                       "--broker_port", "1883", "--client_id", "5g-mobility-consumer-emulator",
                       "--topic", "its_center/inqueue/5g-mobility" ]
+        restart: unless-stopped
+        environment:
+            - ENVIRONMENT=production
+            - DB_NAME=5g-mobility
+            - DB_USER=django
+            - DB_PASSWORD=djangopass
+            - DB_HOST=mongodb
+            - DB_PORT=27017
+            - DB_AUTH=5g-mobility
+            - REDIS_HOST=redis
+            - RABBIT_HOST=rabbitmq
+        depends_on:
+            - mongodb
+        networks:
+            - mongodb_network
+    processor_old_radar_events:
+        build:
+            context: .
+        entrypoint: [ "python", "manage.py", "process_old_radar_events"]
         restart: unless-stopped
         environment:
             - ENVIRONMENT=production
