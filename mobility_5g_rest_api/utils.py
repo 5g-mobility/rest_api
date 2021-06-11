@@ -2,7 +2,10 @@ from mobility_5g_rest_api.models import DailyInflow
 
 
 def process_daily_inflow(event, location):
-    daily_inflow = DailyInflow.objects.get(date=event.timestamp.date())
+    try:
+        daily_inflow = DailyInflow.objects.get(date=event.timestamp.date())
+    except DailyInflow.DoesNotExist:
+        daily_inflow = None
 
     to_sum = 0
     if location == 'PT':

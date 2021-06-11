@@ -218,9 +218,9 @@ class DailyInflow(models.Model):
             )
 
     def save(self, *args, **kwargs):
-        self.full_clean()
         if self.current > self.maximum:
             self.maximum = self.current
+        self.full_clean()
         return super().save(*args, **kwargs)
 
 
