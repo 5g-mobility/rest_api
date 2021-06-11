@@ -108,10 +108,10 @@ class Command(BaseCommand):
         self.radar_id = int(options.get("topic")[0][23:24])
 
         if self.radar_id == 7:  # Ria Ativa
-            self.checkpoint = (40.607344, -8.748931), (40.6071020, -8.748794)
+            self.checkpoint = (40.607344, -8.748931), (40.6071010, -8.748792)
             self.map_lat_lon = (40.607120, -8.748817)
             self.offset_lat_lon = (0, -0.000075)
-            self.offset_time = datetime.timedelta(seconds=5, milliseconds=150)
+            self.offset_time = datetime.timedelta(seconds=5, milliseconds=500)
         elif self.radar_id == 5:  # Ponte Barra
             self.checkpoint = (40.627990, -8.732713)
             self.map_lat_lon = (40.627790, -8.732017)
