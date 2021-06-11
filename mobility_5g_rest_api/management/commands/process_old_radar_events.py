@@ -1,7 +1,8 @@
 import time
 from datetime import datetime, timedelta
 from django.core.management.base import BaseCommand
-from mobility_5g_rest_api.models import Event, RadarEvent
+from mobility_5g_rest_api.models import Event, RadarEvent, DailyInflow
+from mobility_5g_rest_api.utils import process_daily_inflow
 
 
 class Command(BaseCommand):
@@ -20,11 +21,13 @@ class Command(BaseCommand):
                 old_radar_events = RadarEvent.objects.filter(timestamp__lt=(datetime.now() - timedelta(seconds=45)),
                                                              radar_id=radar_id)
                 for event in old_radar_events:
-                    if event.velocity >= 5:
+                    if abs(event.velocity) >= 5:
                         Event.objects.create(location=location,
                                              event_type="RT",
                                              event_class="CA",
                                              timestamp=event.timestamp,
-                                             velocity=event.velocity)
-                    event.delete()
+                                             velocity=abs(event.velocity))
 
+                        process_daily_inflow(event, location)
+
+                    event.delete()

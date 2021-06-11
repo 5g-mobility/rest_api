@@ -110,7 +110,7 @@ class Command(BaseCommand):
         if self.radar_id == 7:  # Ria Ativa
             self.checkpoint = (40.607300, -8.748921), (40.607173, -8.748802)
             self.map_lat_lon = (40.607120, -8.748817)
-            self.offset_lat_lon = (0, 0.000040)
+            self.offset_lat_lon = (0, -0.000075)
             self.offset_time = datetime.timedelta(seconds=5, milliseconds=000)
         elif self.radar_id == 5:  # Ponte Barra
             self.checkpoint = (40.627990, -8.732713)
@@ -207,12 +207,14 @@ class Command(BaseCommand):
 
                 # Save object
                 if speed != 0:
+                    '''
                     RadarEvent.objects.create(timestamp=time_in_radar_until_seconds,
                                               velocity=speed,
                                               latitude=object_position[0],
                                               longitude=object_position[1],
                                               radar_id=station_id
                                               )
+                                              '''
 
         self.map_objects = map_objects
         self.map_time = time_in_radar_epoch

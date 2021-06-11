@@ -1,10 +1,12 @@
 # Create your tasks here
 from __future__ import absolute_import, unicode_literals
-from mobility_5g_rest_api.models import Event, RadarEvent
+from mobility_5g_rest_api.models import Event, RadarEvent, DailyInflow
 import json
 from datetime import datetime, timedelta
 from celery import shared_task
 from celery.utils.log import get_task_logger
+
+from mobility_5g_rest_api.utils import process_daily_inflow
 
 logger = get_task_logger(__name__)
 
@@ -54,6 +56,7 @@ def sensor_fusion(json_data):
                                          event_type="BL",
                                          event_class="PE",
                                          timestamp=timestamp_event)
+
                 elif event['class'] == 'bicycle':
                     Event.objects.create(location=location,
                                          event_type="BL",
@@ -81,6 +84,7 @@ def sensor_fusion(json_data):
                                          event_class="SC",
                                          timestamp=timestamp_event)
                 else:
+                    radar_event = None
                     event_class = 'CA' if event['class'] == 'car' else ('TR' if event['class'] == 'truck' else 'MC')
                     if event['speed'] > 0:
                         if pos_velocity_radar_events:
@@ -89,7 +93,7 @@ def sensor_fusion(json_data):
                                                  event_type="RT",
                                                  event_class=event_class,
                                                  timestamp=radar_event.timestamp,
-                                                 velocity=radar_event.velocity)
+                                                 velocity=abs(radar_event.velocity))
                             radar_event.delete()
                             pos_velocity_radar_events.remove(radar_event)
                         else:
@@ -99,7 +103,7 @@ def sensor_fusion(json_data):
                                                      event_type="RT",
                                                      event_class=event_class,
                                                      timestamp=radar_event.timestamp,
-                                                     velocity=radar_event.velocity)
+                                                     velocity=abs(radar_event.velocity))
                                 radar_event.delete()
                                 last_5_seconds_radar_events_gt.remove(radar_event)
 
@@ -110,7 +114,7 @@ def sensor_fusion(json_data):
                                                  event_type="RT",
                                                  event_class=event_class,
                                                  timestamp=radar_event.timestamp,
-                                                 velocity=radar_event.velocity)
+                                                 velocity=abs(radar_event.velocity))
                             radar_event.delete()
                             neg_velocity_radar_events.remove(radar_event)
                         else:
@@ -120,18 +124,11 @@ def sensor_fusion(json_data):
                                                      event_type="RT",
                                                      event_class=event_class,
                                                      timestamp=radar_event.timestamp,
-                                                     velocity=radar_event.velocity)
+                                                     velocity=abs(radar_event.velocity))
                                 radar_event.delete()
                                 last_5_seconds_radar_events_lt.remove(radar_event)
 
-        radar_events = RadarEvent.objects.filter(timestamp=timestamp_event, radar_id=json_obj[0]['radarId'])
-        for event in radar_events:
-            if event.velocity >= 5:
-                Event.objects.create(location=location,
-                                     event_type="RT",
-                                     event_class="CA",
-                                     timestamp=event.timestamp,
-                                     velocity=event.velocity)
-            event.delete()
+                    if radar_event:
+                        process_daily_inflow(radar_event, location)
 
     return "Processed the JSON {}".format(json_data)

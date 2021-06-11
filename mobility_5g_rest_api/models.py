@@ -193,12 +193,12 @@ class DailyInflow(models.Model):
     maximum = models.IntegerField(
         validators=[
             MinValueValidator(0)
-        ]
+        ], default=0
     )
     current = models.IntegerField(
         validators=[
             MinValueValidator(0)
-        ]
+        ], default=0
     )
     date = models.DateField()
 
@@ -219,6 +219,8 @@ class DailyInflow(models.Model):
 
     def save(self, *args, **kwargs):
         self.full_clean()
+        if self.current > self.maximum:
+            self.maximum = self.current
         return super().save(*args, **kwargs)
 
 
