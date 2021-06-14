@@ -52,7 +52,6 @@ else:
         'http://localhost:4200',
     )
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -68,6 +67,7 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'drf_yasg',
     'corsheaders',
+    'django_crontab'
 ]
 
 MIDDLEWARE = [
@@ -150,7 +150,6 @@ USE_I18N = True
 
 USE_L10N = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
@@ -189,12 +188,18 @@ SWAGGER_SETTINGS = {
 # Celery
 
 CELERY_BROKER_URL = 'amqp://django:djangopass@' + \
-    os.environ.get('RABBIT_HOST', 'localhost')+':5672/celery'
+                    os.environ.get('RABBIT_HOST', 'localhost') + ':5672/celery'
 CELERY_RESULT_BACKEND = 'redis://:djangopass@' + \
-    os.environ.get('REDIS_HOST', 'localhost')+':6379/0'
+                        os.environ.get('REDIS_HOST', 'localhost') + ':6379/0'
 
 CELERY_TASK_TIME_LIMIT = 10 * 60
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
+
+# Cronjobs
+CRONJOBS = [
+    ('00 19 * * *', 'mobility_5g_rest_api.turn_off_cameras'),
+    ('30 7 * * *', 'mobility_5g_rest_api.turn_on_cameras')
+]
