@@ -1,5 +1,6 @@
 import math
 import datetime
+import time
 
 from geopy import distance
 from dash.dependencies import Output, Input
@@ -104,6 +105,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         print("Starting MQTT Consumer")
+
+        time.sleep(30)
 
         self.radar_id = int(options.get("topic")[0][23:24])
 

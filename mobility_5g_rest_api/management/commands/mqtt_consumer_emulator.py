@@ -54,6 +54,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         print("Starting MQTT Consumer")
 
+        time.sleep(30)
+
         t = Thread(target=self.update_co2, args=(), daemon=True)
         t.start()
         t1 = Thread(target=self.update_climate, args=(), daemon=True)
