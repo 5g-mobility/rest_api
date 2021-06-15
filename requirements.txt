@@ -15,3 +15,4 @@ paho-mqtt==1.5.1
 geopy==2.1.0
 plotly==4.14.3
 dash==1.20.0
+django-crontab==0.7.1
