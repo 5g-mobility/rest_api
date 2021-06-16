@@ -6,7 +6,7 @@ RUN python -m pip install --upgrade pip
 RUN pip install --upgrade -r requirements.txt
 RUN apt-get update
 RUN apt-get install --yes nginx
-RUN apt-get install -y cron
+RUN apt-get install -y cron && touch /var/log/cron.log
 
 # OSM Client
 RUN apt-get update

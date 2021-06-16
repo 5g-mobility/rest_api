@@ -200,6 +200,6 @@ CELERY_TIMEZONE = 'UTC'
 
 # Cronjobs
 CRONJOBS = [
-    ('00 19 * * *', 'mobility_5g_rest_api.cron.turn_off_cameras', '>> /log/crontab.log'),
-    ('10 13 * * *', 'mobility_5g_rest_api.cron.turn_on_cameras', '>> /log/crontab.log')
+    ('00 19 * * *', 'mobility_5g_rest_api.cron.turn_off_cameras'),
+    ('25 15 * * *', 'mobility_5g_rest_api.cron.turn_on_cameras')
 ]
