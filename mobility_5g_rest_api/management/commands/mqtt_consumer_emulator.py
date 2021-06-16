@@ -137,8 +137,8 @@ class Command(BaseCommand):
             if rain_sensor:
                 Event.objects.create(location=location,
                                      timestamp=timestamp,
-                                     event_type="RA",
-                                     event_class=light_event_class,
+                                     event_type="CO",
+                                     event_class="RA",
                                      latitude=latitude,
                                      longitude=longitude,
                                      velocity=speed)
@@ -148,8 +148,8 @@ class Command(BaseCommand):
             if fog_light_sensor:
                 Event.objects.create(location=location,
                                      timestamp=timestamp,
-                                     event_type="FO",
-                                     event_class=light_event_class,
+                                     event_type="CO",
+                                     event_class="FO",
                                      latitude=latitude,
                                      longitude=longitude,
                                      velocity=speed)
@@ -194,8 +194,8 @@ class Command(BaseCommand):
                 if rain_sensor:
                     Event.objects.create(location=location,
                                          timestamp=timestamp,
-                                         event_type="RA",
-                                         event_class=light_event_class,
+                                         event_type="CO",
+                                         event_class="RA",
                                          latitude=latitude,
                                          longitude=longitude,
                                          velocity=speed)
@@ -209,8 +209,8 @@ class Command(BaseCommand):
                 if fog_light_sensor:
                     Event.objects.create(location=location,
                                          timestamp=timestamp,
-                                         event_type="FO",
-                                         event_class=light_event_class,
+                                         event_type="CO",
+                                         event_class="FO",
                                          latitude=latitude,
                                          longitude=longitude,
                                          velocity=speed)
