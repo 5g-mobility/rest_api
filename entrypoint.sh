@@ -2,6 +2,7 @@
 
 nc -zvv mongodb 27017
 
+service cron start
 python manage.py crontab add
 python manage.py makemigrations
 python manage.py collectstatic --noinput
