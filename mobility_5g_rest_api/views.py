@@ -209,12 +209,12 @@ def bike_lanes_stats(request):
     datelte = request.query_params.get('timestamp__lte', datetime.datetime.now())
 
     try:
-        data['people'] = Event.objects.filter(timestamp__gte=dategte, timestamp__lte=datelte, event_type="RT",
+        data['people'] = Event.objects.filter(timestamp__gte=dategte, timestamp__lte=datelte, event_type="BL",
                                               event_class="PE", location=location).count()
         data['animals'] = Event.objects.filter(timestamp__gte=dategte, timestamp__lte=datelte,
-                                               event_type="RT", event_class="BC", location=location,).count()
-        data['bikes'] = Event.objects.filter(timestamp__gte=dategte, timestamp__lte=datelte, event_type="RT",
-                                             event_class="AN", location=location).count()
+                                               event_type="BL", event_class="AN", location=location,).count()
+        data['bikes'] = Event.objects.filter(timestamp__gte=dategte, timestamp__lte=datelte, event_type="BL",
+                                             event_class="BC", location=location).count()
     except:
         data['error'] = "Location must be RA, DN or PT and timestamp__gte is needed"
         st = status.HTTP_400_BAD_REQUEST
