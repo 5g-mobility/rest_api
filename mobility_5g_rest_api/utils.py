@@ -1,4 +1,5 @@
 from mobility_5g_rest_api.models import DailyInflow
+from datetime import timedelta
 
 
 def process_daily_inflow(event, location):
@@ -20,6 +21,14 @@ def process_daily_inflow(event, location):
         daily_inflow.current += to_sum
         daily_inflow.save()
     else:
+        try:
+            daily_inflow = DailyInflow.objects.get(date=(event.timestamp.date() - timedelta(days=1)))
+        except DailyInflow.DoesNotExist:
+            daily_inflow = None
+
         if to_sum < 0:
             to_sum = 0
+
+        if daily_inflow:
+            to_sum += daily_inflow.current
         DailyInflow.objects.create(location='BT', date=event.timestamp.date(), current=to_sum)
