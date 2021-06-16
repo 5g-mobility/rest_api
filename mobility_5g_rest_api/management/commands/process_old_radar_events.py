@@ -11,7 +11,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         print("Running Old Radar Event")
         while True:
-            time.sleep(45)
+            time.sleep(90)
             for radar_id in [5, 7]:
                 if radar_id == 5:
                     location = 'PT'
