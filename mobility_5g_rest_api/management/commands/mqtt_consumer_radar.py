@@ -28,6 +28,7 @@ class Command(BaseCommand):
         self.last_time = datetime.datetime(1970, 1, 1)
         self.old_iteration = []
         self.to_delete = []
+        self.to_delete_timestamp = []
         self.map_objects = []
         self.map_time = datetime.datetime.now()
         self.radar_id = None
@@ -214,7 +215,7 @@ class Command(BaseCommand):
 
                     # print("\n", time_in_radar_until_seconds)
                     # print(time_in_radar_epoch)
-                    # print(speed, str(object_position[0]) + "," + str(object_position[1]), "\n")
+                    # print(speed, str(object_position[0]) + "," + str(object_position[1]), object_id, "\n")
                     RadarEvent.objects.create(timestamp=time_in_radar_until_seconds,
                                               velocity=speed,
                                               latitude=object_position[0],
@@ -227,15 +228,18 @@ class Command(BaseCommand):
 
         old_objects_not_in_this_iteration = [obj_id for obj_id in self.old_iteration if
                                              obj_id not in perceived_objects_ids]
-        for obj_id in self.to_delete:
+        for index, obj_id in enumerate(self.to_delete):
             if obj_id not in old_objects_not_in_this_iteration:
                 if obj_id in self.perceived_objects_on_zone:
-                    self.perceived_objects_on_zone.remove(obj_id)
-                    self.to_delete.remove(obj_id)
+                    if (time_in_radar_epoch-self.to_delete_timestamp[index]).total_seconds() > 300:
+                        self.perceived_objects_on_zone.remove(obj_id)
+                        self.to_delete.pop(index)
+                        self.to_delete_timestamp.pop(index)
 
         for obj_id in old_objects_not_in_this_iteration:
             if obj_id not in self.to_delete:
                 self.to_delete.append(obj_id)
+                self.to_delete_timestamp.append(time_in_radar_epoch)
 
         self.old_iteration = perceived_objects_ids
 
