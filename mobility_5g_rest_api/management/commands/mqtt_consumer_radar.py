@@ -111,15 +111,14 @@ class Command(BaseCommand):
         self.radar_id = int(options.get("topic")[0][23:24])
 
         if self.radar_id == 7:  # Ria Ativa
-            self.checkpoint = (40.607344, -8.748931), (40.6071010, -8.748792)
+            self.checkpoint = (40.607300, -8.748921), (40.607173, -8.748802)
             self.map_lat_lon = (40.607120, -8.748817)
-            self.offset_lat_lon = (0, -0.000075)
-            self.offset_time = datetime.timedelta(seconds=5, milliseconds=500)
+            self.offset_time = datetime.timedelta(seconds=12, milliseconds=000)
         elif self.radar_id == 5:  # Ponte Barra
             self.checkpoint = (40.628067, -8.732920)
             self.map_lat_lon = (40.627790, -8.732017)
             self.offset_lat_lon = (-0.000040, 0)
-            self.offset_time = datetime.timedelta(seconds=6, milliseconds=15)
+            self.offset_time = datetime.timedelta(seconds=10, milliseconds=000)
         else:
             print("Radar not supported!")
             quit()
@@ -156,9 +155,9 @@ class Command(BaseCommand):
         latitude = int(reference_position.find('latitude').text) / 10000000
         # print(station_id, timestamp_delta, longitude, latitude)
 
-        sec_time_in_radar_since_2004 = (65536 * multiplier + timestamp_delta) / 1000
+        ms_time_in_radar_since_2004 = (65536 * multiplier + timestamp_delta) / 1000
 
-        time_in_radar_epoch = datetime.datetime.fromtimestamp(sec_time_in_radar_since_2004 + self.sec_epoch_2004) - \
+        time_in_radar_epoch = datetime.datetime.fromtimestamp(ms_time_in_radar_since_2004 + self.sec_epoch_2004) - \
                               self.offset_time
 
         if time_in_radar_epoch < self.last_time:
@@ -179,7 +178,7 @@ class Command(BaseCommand):
 
             perceived_objects_ids.append(object_id)
 
-            # map_objects.append((self.checkpoint[0], self.checkpoint[1], 8178372183, 22))
+            # map_objects.append((self.checkpoint[0][0], self.checkpoint[0][1], 8178372183, 22))
             # map_objects.append((self.checkpoint[1][0], self.checkpoint[1][1], 8178372183, 22))
 
             if object_id in self.perceived_objects_on_zone:
@@ -199,7 +198,7 @@ class Command(BaseCommand):
             if (self.radar_id == 7 and self.checkpoint[1][0] <= object_position[0] <= self.checkpoint[0][0] and
                 self.checkpoint[0][1] <= \
                 object_position[1] <= self.checkpoint[1][1]) or (
-                    self.radar_id == 5 and distance.distance(self.checkpoint, object_position).km <= 0.050):
+                    self.radar_id == 5 and distance.distance(self.checkpoint, object_position).km <= 0.045):
                 self.perceived_objects_on_zone.append(object_id)
 
                 # Save object
@@ -207,7 +206,7 @@ class Command(BaseCommand):
 
                     if station_id == 5:
                         if speed > 0:
-                            time_in_radar_epoch -= datetime.timedelta(milliseconds=250)
+                            time_in_radar_epoch -= datetime.timedelta(milliseconds=850)
                         else:
                             time_in_radar_epoch += datetime.timedelta(seconds=1)
 
@@ -216,7 +215,6 @@ class Command(BaseCommand):
                     # print("\n", time_in_radar_until_seconds)
                     # print(time_in_radar_epoch)
                     # print(speed, str(object_position[0]) + "," + str(object_position[1]), "\n")
-
                     RadarEvent.objects.create(timestamp=time_in_radar_until_seconds,
                                               velocity=speed,
                                               latitude=object_position[0],
