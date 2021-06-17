@@ -205,24 +205,26 @@ class Command(BaseCommand):
                 # Save object
                 if speed != 0:
 
+                    time_in_radar_epoch_to_use = time_in_radar_epoch
+
                     if station_id == 5:
                         if speed > 0:
-                            time_in_radar_epoch -= datetime.timedelta(milliseconds=850)
+                            time_in_radar_epoch_to_use -= datetime.timedelta(milliseconds=850)
                         else:
-                            time_in_radar_epoch += datetime.timedelta(seconds=1)
+                            time_in_radar_epoch_to_use += datetime.timedelta(seconds=1)
 
-                    time_in_radar_until_seconds = time_in_radar_epoch.replace(microsecond=0)
+                    time_in_radar_until_seconds = time_in_radar_epoch_to_use.replace(microsecond=0)
 
                     # print("\n", time_in_radar_until_seconds)
-                    # print(time_in_radar_epoch)
+                    # print(time_in_radar_epoch_to_use)
                     # print(speed, str(object_position[0]) + "," + str(object_position[1]), object_id, "\n")
+
                     RadarEvent.objects.create(timestamp=time_in_radar_until_seconds,
                                               velocity=speed,
                                               latitude=object_position[0],
                                               longitude=object_position[1],
                                               radar_id=station_id
                                               )
-
         self.map_objects = map_objects
         self.map_time = time_in_radar_epoch
 
@@ -231,7 +233,7 @@ class Command(BaseCommand):
         for index, obj_id in enumerate(self.to_delete):
             if obj_id not in old_objects_not_in_this_iteration:
                 if obj_id in self.perceived_objects_on_zone:
-                    if (time_in_radar_epoch-self.to_delete_timestamp[index]).total_seconds() > 300:
+                    if (time_in_radar_epoch-self.to_delete_timestamp[index]).total_seconds() > 45:
                         self.perceived_objects_on_zone.remove(obj_id)
                         self.to_delete.pop(index)
                         self.to_delete_timestamp.pop(index)

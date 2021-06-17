@@ -18,7 +18,7 @@ class Command(BaseCommand):
                 elif radar_id == 7:
                     location = 'RA'
 
-                old_radar_events = RadarEvent.objects.filter(timestamp__lt=(datetime.now() - timedelta(seconds=45)),
+                old_radar_events = RadarEvent.objects.filter(timestamp__lt=(datetime.now() - timedelta(seconds=60)),
                                                              radar_id=radar_id)
                 for event in old_radar_events:
                     if abs(event.velocity) >= 5:
