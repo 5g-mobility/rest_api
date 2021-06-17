@@ -94,7 +94,7 @@ class Event(models.Model):
                                'event type'}
             )
 
-        if self.event_class == "BC" and (self.event_type != "BL" or self.event_type != "RT"):
+        if self.event_class == "BC" and (self.event_type != "BL" and self.event_type != "RT"):
             raise ValidationError(
                 {'event_type': 'Event_class Bicycle is only allowed for the Bike Lanes or Road Traffic event type'}
             )
