@@ -235,8 +235,7 @@ def current_traffic_stats(request):
         data[location] = {}
         objects = Event.objects.filter(timestamp__lte=now,
                                        timestamp__gte=thirty_sec_ago, event_type="RT", location=location)
-        n_objects = objects.count()
-        if n_objects > 0:
+        if objects:
             avg_speed = objects.aggregate(Avg('velocity'))
             if avg_speed <= 30:
                 data[location]['traffic'] = 'Slow'

@@ -114,12 +114,12 @@ class Command(BaseCommand):
         if self.radar_id == 7:  # Ria Ativa
             self.checkpoint = (40.607300, -8.748921), (40.607173, -8.748802)
             self.map_lat_lon = (40.607120, -8.748817)
-            self.offset_time = datetime.timedelta(seconds=12, milliseconds=000)
+            self.offset_time = datetime.timedelta(seconds=7, milliseconds=550)
         elif self.radar_id == 5:  # Ponte Barra
-            self.checkpoint = (40.628067, -8.732920)
+            self.checkpoint = (40.628034, -8.732850)
             self.map_lat_lon = (40.627790, -8.732017)
             self.offset_lat_lon = (-0.000040, 0)
-            self.offset_time = datetime.timedelta(seconds=10, milliseconds=500)
+            self.offset_time = datetime.timedelta(seconds=11, milliseconds=500)
         else:
             print("Radar not supported!")
             quit()
@@ -179,7 +179,7 @@ class Command(BaseCommand):
 
             perceived_objects_ids.append(object_id)
 
-            # map_objects.append((self.checkpoint[0][0], self.checkpoint[0][1], 8178372183, 22))
+            # map_objects.append((self.checkpoint[0], self.checkpoint[1], 8178372183, 22))
             # map_objects.append((self.checkpoint[1][0], self.checkpoint[1][1], 8178372183, 22))
 
             if object_id in self.perceived_objects_on_zone:
@@ -199,26 +199,24 @@ class Command(BaseCommand):
             if (self.radar_id == 7 and self.checkpoint[1][0] <= object_position[0] <= self.checkpoint[0][0] and
                 self.checkpoint[0][1] <= \
                 object_position[1] <= self.checkpoint[1][1]) or (
-                    self.radar_id == 5 and distance.distance(self.checkpoint, object_position).km <= 0.050):
+                    self.radar_id == 5 and distance.distance(self.checkpoint, object_position).km <= 0.014):
                 self.perceived_objects_on_zone.append(object_id)
 
                 # Save object
-                if speed != 0:
+                if abs(speed) > 5:
 
                     time_in_radar_epoch_to_use = time_in_radar_epoch
 
                     if station_id == 5:
-                        if speed > 0:
-                            time_in_radar_epoch_to_use -= datetime.timedelta(seconds=1, milliseconds=150)
-                        else:
-                            time_in_radar_epoch_to_use += datetime.timedelta(seconds=1)
+                        if speed < 0:
+                            time_in_radar_epoch_to_use += datetime.timedelta(milliseconds=250)
 
                     time_in_radar_until_seconds = time_in_radar_epoch_to_use.replace(microsecond=0)
 
                     # print("\n", time_in_radar_until_seconds)
+                    # print(time_in_radar_epoch)
                     # print(time_in_radar_epoch_to_use)
                     # print(speed, str(object_position[0]) + "," + str(object_position[1]), object_id, "\n")
-
                     RadarEvent.objects.create(timestamp=time_in_radar_until_seconds,
                                               velocity=speed,
                                               latitude=object_position[0],
