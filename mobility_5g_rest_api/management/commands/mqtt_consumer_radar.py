@@ -215,16 +215,16 @@ class Command(BaseCommand):
 
                     time_in_radar_until_seconds = time_in_radar_epoch_to_use.replace(microsecond=0)
 
-                    print("\n", time_in_radar_until_seconds)
+                    # print("\n", time_in_radar_until_seconds)
                     # print(time_in_radar_epoch_to_use)
-                    print(speed, str(object_position[0]) + "," + str(object_position[1]), object_id, "\n")
-                    '''
+                    # print(speed, str(object_position[0]) + "," + str(object_position[1]), object_id, "\n")
+
                     RadarEvent.objects.create(timestamp=time_in_radar_until_seconds,
                                               velocity=speed,
                                               latitude=object_position[0],
                                               longitude=object_position[1],
                                               radar_id=station_id
-                                              )'''
+                                              )
         self.map_objects = map_objects
         self.map_time = time_in_radar_epoch
 
