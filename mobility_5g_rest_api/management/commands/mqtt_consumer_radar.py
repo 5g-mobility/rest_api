@@ -119,7 +119,7 @@ class Command(BaseCommand):
             self.checkpoint = (40.628067, -8.732920)
             self.map_lat_lon = (40.627790, -8.732017)
             self.offset_lat_lon = (-0.000040, 0)
-            self.offset_time = datetime.timedelta(seconds=10, milliseconds=000)
+            self.offset_time = datetime.timedelta(seconds=10, milliseconds=500)
         else:
             print("Radar not supported!")
             quit()
@@ -199,7 +199,7 @@ class Command(BaseCommand):
             if (self.radar_id == 7 and self.checkpoint[1][0] <= object_position[0] <= self.checkpoint[0][0] and
                 self.checkpoint[0][1] <= \
                 object_position[1] <= self.checkpoint[1][1]) or (
-                    self.radar_id == 5 and distance.distance(self.checkpoint, object_position).km <= 0.045):
+                    self.radar_id == 5 and distance.distance(self.checkpoint, object_position).km <= 0.050):
                 self.perceived_objects_on_zone.append(object_id)
 
                 # Save object
@@ -209,22 +209,22 @@ class Command(BaseCommand):
 
                     if station_id == 5:
                         if speed > 0:
-                            time_in_radar_epoch_to_use -= datetime.timedelta(milliseconds=850)
+                            time_in_radar_epoch_to_use -= datetime.timedelta(seconds=1, milliseconds=150)
                         else:
                             time_in_radar_epoch_to_use += datetime.timedelta(seconds=1)
 
                     time_in_radar_until_seconds = time_in_radar_epoch_to_use.replace(microsecond=0)
 
-                    # print("\n", time_in_radar_until_seconds)
+                    print("\n", time_in_radar_until_seconds)
                     # print(time_in_radar_epoch_to_use)
-                    # print(speed, str(object_position[0]) + "," + str(object_position[1]), object_id, "\n")
-
+                    print(speed, str(object_position[0]) + "," + str(object_position[1]), object_id, "\n")
+                    '''
                     RadarEvent.objects.create(timestamp=time_in_radar_until_seconds,
                                               velocity=speed,
                                               latitude=object_position[0],
                                               longitude=object_position[1],
                                               radar_id=station_id
-                                              )
+                                              )'''
         self.map_objects = map_objects
         self.map_time = time_in_radar_epoch
 
