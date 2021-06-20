@@ -1,0 +1,212 @@
+[
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 0,
+    "fields": {
+      "date": "2021-04-15",
+      "location": "CN",
+      "maximum": 18
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 1,
+    "fields": {
+      "date": "2021-04-15",
+      "location": "BA",
+      "maximum": 57
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 2,
+    "fields": {
+      "date": "2021-04-16",
+      "location": "CN",
+      "maximum": 27
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 3,
+    "fields": {
+      "date": "2021-04-16",
+      "location": "BA",
+      "maximum": 53
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 4,
+    "fields": {
+      "date": "2021-04-17",
+      "location": "CN",
+      "maximum": 49
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 5,
+    "fields": {
+      "date": "2021-04-17",
+      "location": "BA",
+      "maximum": 34
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 6,
+    "fields": {
+      "date": "2021-04-18",
+      "location": "CN",
+      "maximum": 10
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 7,
+    "fields": {
+      "date": "2021-04-18",
+      "location": "BA",
+      "maximum": 9
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 8,
+    "fields": {
+      "date": "2021-04-19",
+      "location": "CN",
+      "maximum": 44
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 9,
+    "fields": {
+      "date": "2021-04-19",
+      "location": "BA",
+      "maximum": 28
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 10,
+    "fields": {
+      "date": "2021-04-20",
+      "location": "CN",
+      "maximum": 63
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 11,
+    "fields": {
+      "date": "2021-04-20",
+      "location": "BA",
+      "maximum": 19
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 12,
+    "fields": {
+      "date": "2021-04-21",
+      "location": "CN",
+      "maximum": 27
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 13,
+    "fields": {
+      "date": "2021-04-21",
+      "location": "BA",
+      "maximum": 45
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 14,
+    "fields": {
+      "date": "2021-04-22",
+      "location": "CN",
+      "maximum": 22
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 15,
+    "fields": {
+      "date": "2021-04-22",
+      "location": "BA",
+      "maximum": 21
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 16,
+    "fields": {
+      "date": "2021-04-23",
+      "location": "CN",
+      "maximum": 71
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 17,
+    "fields": {
+      "date": "2021-04-23",
+      "location": "BA",
+      "maximum": 63
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 18,
+    "fields": {
+      "date": "2021-04-24",
+      "location": "CN",
+      "maximum": 55
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 19,
+    "fields": {
+      "date": "2021-04-24",
+      "location": "BA",
+      "maximum": 34
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 20,
+    "fields": {
+      "date": "2021-04-25",
+      "location": "BA",
+      "maximum": 62,
+      "current": 24
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 21,
+    "fields": {
+      "date": "2021-04-25",
+      "location": "CN",
+      "maximum": 31,
+      "current": 3
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.DailyInflow",
+    "pk": 22,
+    "fields": {
+      "date": "2021-04-25",
+      "location": "BT",
+      "maximum": 31,
+      "current": 3
+    }
+  }
+]

@@ -1,0 +1,24 @@
+[
+  {
+    "model": "mobility_5g_rest_api.Climate",
+    "pk": 1,
+    "fields": {
+      "timestamp": "2021-04-15 16:31:57.446530",
+      "location": "BA",
+      "condition": "RN",
+      "daytime": "True",
+      "temperature": 19.6
+    }
+  },
+  {
+    "model": "mobility_5g_rest_api.Climate",
+    "pk": 2,
+    "fields": {
+      "timestamp": "2021-04-15 16:32:57.446530",
+      "location": "CN",
+      "condition": "FG",
+      "daytime": "True",
+      "temperature": 19.2
+    }
+  }
+]
