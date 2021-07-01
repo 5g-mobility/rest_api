@@ -19,7 +19,6 @@ RUN python -m pip install python-magic pyangbind verboselogs
 RUN apt-get install -y python3-osmclient
 
 RUN cp -r /usr/lib/python3/dist-packages/osmclient /usr/local/lib/python3.8/site-packages
-RUN cp -r /usr/lib/python3/dist-packages/osm_im /usr/local/lib/python3.8/site-packages
 RUN pip install pyyaml==5.4.1
 RUN pip install pycurl==7.43.0.6
 
